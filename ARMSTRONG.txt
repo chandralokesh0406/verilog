@@ -1,0 +1,140 @@
+ARMSTRONG number:
+
+module armstrong(clk,reset,num,out);
+  input  wire clk,reset;
+  input  wire [31:0]num;
+  
+  output reg out;
+  
+  parameter s0 = 2'b00;
+  parameter s1 = 2'b01;
+  parameter s2 = 2'b10;
+  
+  
+  //parameter width = 32;
+   reg [31:0] digit;
+  reg [31:0] sum;
+  
+  
+  reg [1:0] current_state,next_state;
+  
+  //9reg [31:0]count;
+  
+  
+  always @(*) begin
+    next_state = current_state;
+    
+    case(current_state)
+      s0:
+        begin
+          next_state = s1;
+        end
+      s1:
+        begin
+          if(digit > 0)
+            next_state = s1;
+          else
+            next_state = s2;
+        end
+      s2:
+        begin
+          next_state = s0;
+        end
+    endcase
+  end
+  
+  
+  
+  always @(posedge clk or negedge reset)
+    begin
+      if(!reset) begin
+        current_state <= s0;
+        sum <= 0;
+        out <= 0;
+      end
+      else
+        begin
+          current_state <= next_state;
+          case(current_state)
+            s0:
+              begin
+                digit <= num;
+                sum <= 0;
+                out <= 0;
+              end
+            s1:
+              begin
+                sum <= sum + ((digit % 10) * (digit % 10) * (digit % 10));
+                digit <= digit/10;
+              end
+            s2:
+              begin
+                if(sum == num)
+                  out <= 1;
+                else
+                  out <= 0;
+              end
+          endcase
+        end
+    end
+endmodule
+
+Testbench:
+module tb;
+  reg clk,reset;
+  reg [31:0] num;
+  wire out;
+  
+  armstrong u1(.out(out),.num(num),.reset(reset),.clk(clk));
+  
+  initial
+    begin
+      
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      
+      reset = 0; #10;
+      reset = 1;                                                                                                             
+      num = 153;
+      #135;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,num=%0d,out=%0b",$time,clk,reset,num,out);
+    end
+endmodule
+
+Output:
+# KERNEL: time=0,clk=0,reset=0,num=x,out=0
+# KERNEL: time=5,clk=1,reset=0,num=x,out=0
+# KERNEL: time=10,clk=0,reset=1,num=153,out=0
+# KERNEL: time=15,clk=1,reset=1,num=153,out=0
+# KERNEL: time=20,clk=0,reset=1,num=153,out=0
+# KERNEL: time=25,clk=1,reset=1,num=153,out=0
+# KERNEL: time=30,clk=0,reset=1,num=153,out=0
+# KERNEL: time=35,clk=1,reset=1,num=153,out=0
+# KERNEL: time=40,clk=0,reset=1,num=153,out=0
+# KERNEL: time=45,clk=1,reset=1,num=153,out=0
+# KERNEL: time=50,clk=0,reset=1,num=153,out=0
+# KERNEL: time=55,clk=1,reset=1,num=153,out=0
+# KERNEL: time=60,clk=0,reset=1,num=153,out=0
+# KERNEL: time=65,clk=1,reset=1,num=153,out=1
+# KERNEL: time=70,clk=0,reset=1,num=153,out=1
+# KERNEL: time=75,clk=1,reset=1,num=153,out=0
+# KERNEL: time=80,clk=0,reset=1,num=153,out=0
+# KERNEL: time=85,clk=1,reset=1,num=153,out=0
+# KERNEL: time=90,clk=0,reset=1,num=153,out=0
+# KERNEL: time=95,clk=1,reset=1,num=153,out=0
+# KERNEL: time=100,clk=0,reset=1,num=153,out=0
+# KERNEL: time=105,clk=1,reset=1,num=153,out=0
+# KERNEL: time=110,clk=0,reset=1,num=153,out=0
+# KERNEL: time=115,clk=1,reset=1,num=153,out=0
+# KERNEL: time=120,clk=0,reset=1,num=153,out=0
+# KERNEL: time=125,clk=1,reset=1,num=153,out=1
+# KERNEL: time=130,clk=0,reset=1,num=153,out=1
