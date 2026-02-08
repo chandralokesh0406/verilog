@@ -1,0 +1,79 @@
+module fibonacci_series(clk,reset,out);
+  input wire clk,reset;
+  output reg [31:0]out;
+  
+  
+  reg [31:0]a,b;
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset) begin
+      a <= 0;
+      b <= 1;
+      out <= 0;
+    end
+    else
+      begin
+        out <= a+b;
+        a <= b;
+        b <= out ;  declearing out in place of a+b
+      end
+  end
+Endmodule
+
+
+TESTBENCH:
+
+module tb;
+  reg clk,reset;
+  wire [31:0]out;
+  
+  fibonacci_series u1(.out(out),.clk(clk),.reset(reset));
+  
+  initial
+    begin
+      
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      
+      reset = 0;
+      #5;
+      reset = 1;
+      #100;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("clk=%0b,reset=%0b,out=%0d",clk,reset,out);
+    end
+endmodule
+
+Output:
+
+# KERNEL: clk=0,reset=0,out=0
+# KERNEL: clk=1,reset=1,out=1
+# KERNEL: clk=0,reset=1,out=1
+# KERNEL: clk=1,reset=1,out=1
+# KERNEL: clk=0,reset=1,out=1
+# KERNEL: clk=1,reset=1,out=1
+# KERNEL: clk=0,reset=1,out=1
+# KERNEL: clk=1,reset=1,out=2
+# KERNEL: clk=0,reset=1,out=2
+# KERNEL: clk=1,reset=1,out=2
+# KERNEL: clk=0,reset=1,out=2
+# KERNEL: clk=1,reset=1,out=3
+# KERNEL: clk=0,reset=1,out=3
+# KERNEL: clk=1,reset=1,out=4
+# KERNEL: clk=0,reset=1,out=4
+# KERNEL: clk=1,reset=1,out=5
+# KERNEL: clk=0,reset=1,out=5
+# KERNEL: clk=1,reset=1,out=7
+# KERNEL: clk=0,reset=1,out=7
+# KERNEL: clk=1,reset=1,out=9
+# KERNEL: clk=0,reset=1,out=9
+
