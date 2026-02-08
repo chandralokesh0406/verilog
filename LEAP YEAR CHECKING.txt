@@ -1,0 +1,68 @@
+LEAP YEAR CHECKING:
+
+module leap_year(clk,reset,year,out);
+  input clk,reset;
+  input [127:0]year;
+  output reg out;
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset)
+      begin
+        out <= 0;
+      end
+    else
+      begin
+        if( year % 4 == 0)
+          begin
+            if( year % 100 == 0)
+              begin
+                if ( year % 400 == 0)
+                  out <= 1;
+                else
+                  out <= 0;
+              end
+            else
+              out <= 1;
+          end
+        else
+          out <= 0;
+      end
+  end
+endmodule
+
+Testbench:
+module tb;
+  reg clk,reset;
+  reg [127:0]year;
+  wire out;
+  
+  
+  leap_year u1(.out(out),.year(year),.reset(reset),.clk(clk));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0; #10;
+      reset = 1;
+      year = 2028;
+      #15;
+      $finish;
+    end
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,year=%0d,out=%0b",$time,clk,reset,year,out);
+    end
+endmodule
+
+Output:
+# KERNEL: time=0,clk=0,reset=0,year=x,out=0
+# KERNEL: time=5,clk=1,reset=0,year=x,out=0
+# KERNEL: time=10,clk=0,reset=1,year=2028,out=0
+# KERNEL: time=15,clk=1,reset=1,year=2028,out=1
+# KERNEL: time=20,clk=0,reset=1,year=2028,out=1
