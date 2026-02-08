@@ -1,0 +1,58 @@
+LARGEST OF THREE NUMBERS:
+
+module largest_of_three(clk,reset,a,b,c,out);
+  input clk,reset;
+  input [127:0]a,b,c;
+  output reg [1:0] out;
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset)
+      out <= 2'b00;
+    else if( a>>b && a>>c )
+      out <= 2'b01;
+    else if( b>>a && b>>c)
+      out <= 2'b10;
+    else
+      out <= 2'b11;
+  end
+endmodule
+
+    
+
+Testbench:
+module tb;
+  reg clk,reset;
+  reg [127:0]a,b,c;
+  wire [1:0]out;
+  
+  largest_of_three u1(.clk(clk),.reset(reset),.a(a),.b(b),.c(c),.out(out));
+  
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  initial
+    begin
+      
+      reset = 0; #10;
+      reset = 1;
+      a= 13;
+      b= 15;
+      c= 16;
+      #10;
+      $finish;
+    end
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,a=%0d,b=%0d,c=%0d,out=%02b",$time,clk,reset,a,b,c,out);
+    end
+endmodule
+
+Output:
+# KERNEL: time=0,clk=0,reset=0,a=x,b=x,c=x,out=00
+# KERNEL: time=5,clk=1,reset=0,a=x,b=x,c=x,out=00
+# KERNEL: time=10,clk=0,reset=1,a=13,b=15,c=16,out=00
+# KERNEL: time=15,clk=1,reset=1,a=13,b=15,c=16,out=11
