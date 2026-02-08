@@ -1,0 +1,120 @@
+PRIME_NUMBER_DECTECTION:
+
+module prime_number(clk,reset,num,out);
+  input clk,reset;
+  input [127:0]num;
+  output reg out;
+  
+  
+  parameter s0 = 2'b00;
+  parameter s1 = 2'b01;
+  parameter s2 = 2'b10;
+  
+  int i;
+  
+  reg prime;
+  
+  
+  reg [1:0] current_state,next_state;
+  
+  always @(*) begin
+    next_state = current_state;
+    case(current_state)
+      s0:
+        begin
+          next_state = s1;
+        end
+      s1:
+       begin
+         if( i < num && !prime )
+            next_state = s1;
+          else
+            next_state = s2;
+        end
+      s2:
+        begin
+          next_state = s0;
+        end
+    endcase
+  end
+  
+  
+  always @(posedge clk or negedge reset) begin
+    
+    
+    if(!reset)
+      begin
+        i <= 2;
+        current_state <= s0;
+        prime <= 0;
+        out <= 0;
+      end
+    else
+      begin
+        current_state <= next_state;
+        case(current_state)
+          s0:
+            begin
+              i <= 2;
+              prime <= 0;
+              out <= 0;
+            end
+          s1:
+            begin
+              if( num % i == 0 && i != num)
+                prime <= 1;
+              else
+                i <= i+1;
+                //not_prime <= 0;
+            end
+          s2:
+            begin
+              out <= prime;
+            end
+        endcase
+      end
+  end
+endmodule
+
+Testbench:
+module tb;
+  reg clk,reset;
+  reg [127:0]num;
+  wire out;
+  
+  
+  prime_number u1(.out(out),.num(num),.reset(reset),.clk(clk));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0; #10;
+      reset = 1 ;
+      num = 20;
+      #50;
+      
+      $finish;
+    end
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,num=%0d,out=%0b",$time,clk,reset,num,out);
+    end
+endmodule
+
+Output:
+ KERNEL: time=0,clk=0,reset=0,num=x,out=0
+# KERNEL: time=5,clk=1,reset=0,num=x,out=0
+# KERNEL: time=10,clk=0,reset=1,num=20,out=0
+# KERNEL: time=15,clk=1,reset=1,num=20,out=0
+# KERNEL: time=20,clk=0,reset=1,num=20,out=0
+# KERNEL: time=25,clk=1,reset=1,num=20,out=0
+# KERNEL: time=30,clk=0,reset=1,num=20,out=0
+# KERNEL: time=35,clk=1,reset=1,num=20,out=0
+# KERNEL: time=40,clk=0,reset=1,num=20,out=0
+# KERNEL: time=45,clk=1,reset=1,num=20,out=1
+# KERNEL: time=50,clk=0,reset=1,num=20,out=1
