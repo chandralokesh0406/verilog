@@ -1,0 +1,123 @@
+FACTORIAL NUMBER:
+
+module factorial(clk,reset,num,out);
+  input clk,reset;
+  input [127:0]num;
+  output reg [127:0]out;
+  
+  
+  
+  
+  reg [127:0]temp;
+  
+  reg [127:0]temp_reg;
+  
+  
+  parameter s0 = 2'b00;
+  parameter s1 = 2'b01;
+  
+  reg [1:0] current_state,next_state;
+  
+  
+  always @(*) begin
+    next_state = current_state;
+    case(current_state)
+      s0:
+        begin
+          next_state = s1;
+        end
+      s1:
+        begin
+          if(temp > 0  )
+            next_state = s1;
+          else
+            next_state = s1;
+        end
+    endcase
+  end
+        
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset)
+      begin
+        current_state <= s0;
+        out <= 0;
+        temp <= 0;
+      end
+    else
+      begin
+        current_state <= next_state;
+        case(current_state)
+          s0:
+            begin
+              out <= num;
+              temp <= num-1;
+            end
+          s1:
+            begin
+              out <= temp*out;
+              temp <=  temp - 1;
+            end
+        endcase
+      end
+  end
+endmodule
+              
+              
+          
+ testbench:
+module tb;
+  reg clk,reset;
+  reg [127:0]num;
+  wire [127:0]out;
+  
+  factorial u1(.clk(clk),.reset(reset),.num(num),.out(out));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0; #20;
+      reset = 1; 
+      num = 10;
+      #200;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,num=%0d,out=%0d",$time,clk,reset,num,out);
+    end
+endmodule
+
+Output:
+# KERNEL: time=0,clk=0,reset=0,num=x,out=0
+# KERNEL: time=5,clk=1,reset=0,num=x,out=0
+# KERNEL: time=10,clk=0,reset=0,num=x,out=0
+# KERNEL: time=15,clk=1,reset=0,num=x,out=0
+# KERNEL: time=20,clk=0,reset=1,num=10,out=0
+# KERNEL: time=25,clk=1,reset=1,num=10,out=10
+# KERNEL: time=30,clk=0,reset=1,num=10,out=10
+# KERNEL: time=35,clk=1,reset=1,num=10,out=90
+# KERNEL: time=40,clk=0,reset=1,num=10,out=90
+# KERNEL: time=45,clk=1,reset=1,num=10,out=720
+# KERNEL: time=50,clk=0,reset=1,num=10,out=720
+# KERNEL: time=55,clk=1,reset=1,num=10,out=5040
+# KERNEL: time=60,clk=0,reset=1,num=10,out=5040
+# KERNEL: time=65,clk=1,reset=1,num=10,out=30240
+# KERNEL: time=70,clk=0,reset=1,num=10,out=30240
+# KERNEL: time=75,clk=1,reset=1,num=10,out=151200
+# KERNEL: time=80,clk=0,reset=1,num=10,out=151200
+# KERNEL: time=85,clk=1,reset=1,num=10,out=604800
+# KERNEL: time=90,clk=0,reset=1,num=10,out=604800
+# KERNEL: time=95,clk=1,reset=1,num=10,out=1814400
+# KERNEL: time=100,clk=0,reset=1,num=10,out=1814400
+# KERNEL: time=105,clk=1,reset=1,num=10,out=3628800
+# KERNEL: time=110,clk=0,reset=1,num=10,out=3628800
+# KERNEL: time=115,clk=1,reset=1,num=10,out=3628800
+# KERNEL: time=120,clk=0,reset=1,num=10,out=3628800
