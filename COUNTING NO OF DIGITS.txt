@@ -1,0 +1,81 @@
+COUNTING MO OF DIGITS:
+module counting_no_of_digits(clk,reset,num,out);
+  input clk,reset;
+  input [127:0]num;
+  output  reg [15:0]out;
+  
+  reg [127:0]temp;
+  
+  
+  
+  reg [15:0]count = 1'b0;
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset)
+      begin
+        out <= 0;
+        temp <= num;
+      end
+    else if ( temp > 0)
+      begin
+        temp <= temp / 10;
+        count <= count + 1;
+      end
+    else
+      out <= count;
+  end
+endmodule
+
+Testbench::
+
+module tb;
+  reg clk,reset;
+  reg [127:0]num;
+  wire [15:0] out;
+  
+  
+  counting_no_of_digits u1(.out(out),.num(num),.reset(reset),.clk(clk));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0;
+      num = 12345;#10;
+      reset = 1;
+      #100;
+      $finish;
+    end
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,num=%0d,out=%0d",$time,clk,reset,num,out);
+    end
+endmodule
+
+Output:
+time=0,clk=0,reset=0,num=12345,out=0
+# KERNEL: time=5,clk=1,reset=0,num=12345,out=0
+# KERNEL: time=10,clk=0,reset=1,num=12345,out=0
+# KERNEL: time=15,clk=1,reset=1,num=12345,out=0
+# KERNEL: time=20,clk=0,reset=1,num=12345,out=0
+# KERNEL: time=25,clk=1,reset=1,num=12345,out=0
+# KERNEL: time=30,clk=0,reset=1,num=12345,out=0
+# KERNEL: time=35,clk=1,reset=1,num=12345,out=0
+# KERNEL: time=40,clk=0,reset=1,num=12345,out=0
+# KERNEL: time=45,clk=1,reset=1,num=12345,out=0
+# KERNEL: time=50,clk=0,reset=1,num=12345,out=0
+# KERNEL: time=55,clk=1,reset=1,num=12345,out=0
+# KERNEL: time=60,clk=0,reset=1,num=12345,out=0
+# KERNEL: time=65,clk=1,reset=1,num=12345,out=5
+# KERNEL: time=70,clk=0,reset=1,num=12345,out=5
+# KERNEL: time=75,clk=1,reset=1,num=12345,out=5
+# KERNEL: time=80,clk=0,reset=1,num=12345,out=5
+# KERNEL: time=85,clk=1,reset=1,num=12345,out=5
+# KERNEL: time=90,clk=0,reset=1,num=12345,out=5
+# KERNEL: time=95,clk=1,reset=1,num=12345,out=5
+# KERNEL: time=100,clk=0,reset=1,num=12345,out=5
+# KERNEL: time=105,clk=1,reset=1,num=12345,out=5
