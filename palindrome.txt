@@ -1,0 +1,180 @@
+module palindrome_(clk,reset,num,out);
+  input wire clk,reset;
+  input wire [31:0]num;
+  output reg out;
+  
+  
+  reg [31:0]reverse = 1'b0;
+ 
+  
+  reg [31:0]digit;
+  
+  
+  
+  
+    
+  
+  parameter s0 = 2'b00;
+  parameter s1 = 2'b01;
+  parameter s2 = 2'b10;
+  //parameter s3 = 2'b11;
+  
+  
+  reg [1:0] current_state,next_state;
+  
+  always @(*) begin
+    next_state = current_state;
+    case(current_state)
+    s0:
+    begin
+      if(current_state == s0)
+        next_state = s1;
+      else
+        next_state = s0;
+    end
+      s1:
+        begin
+          if(current_state== s1)
+            next_state = s2;
+          else
+            next_state = s1;
+        end
+      s2:
+        begin
+          if(current_state == s2)
+            next_state = s0;
+          else
+            next_state = s2;
+        end
+    endcase
+  end
+  
+  
+  always @(posedge clk  or negedge reset)
+    begin
+      if(!reset)
+        begin
+          current_state <= s0;
+          out <= 0;
+          digit <= 0;
+          reverse <= 0;
+        end
+      else
+        begin
+         current_state <= next_state;
+        case(current_state)
+          s0:
+            begin
+              if(digit == 0&& reverse == 0) begin
+                digit <= num;
+              end
+            end
+          s1:
+            begin
+              if(digit  > 0)
+                reverse <= reverse * 10 + (digit % 10);
+            end
+          s2:
+            begin
+              digit < = digit  / 10;
+            end
+        endcase
+											
+        end
+      
+      if(digit  ==0 && current_state == s2)
+        if(reverse == num)
+          out <= 1;
+        else
+          out <= 0;
+    end
+endmodule
+
+TESTBENCH:
+module tb;
+  reg clk,reset;
+  reg [31:0]num;
+  wire out;
+  
+  
+  palindrome_ dut(.out(out),.num(num),.reset(reset),.clk(clk));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0; #5;
+      reset = 1;
+      num = 123454321; #400;
+      $finish;
+    end
+  initial
+    begin
+      $monitor("clk=%0b,reset=%0b,num=%0d,out=%0b",clk,reset,num,out);
+    end
+endmodule
+
+Output:
+From <https://edaplayground.com/x/PK_f> 
+# KERNEL: clk=0,reset=0,num=x,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=0
+# KERNEL: clk=0,reset=1,num=123454321,out=0
+# KERNEL: clk=1,reset=1,num=123454321,out=1
+# KERNEL: clk=0,reset=1,num=123454321,out=1
+# KERNEL: clk=1,reset=1,num=123454321,out=1
+# KERNEL: clk=0,reset=1,num=123454321,out=1
+# KERNEL: clk=1,reset=1,num=123454321,out=1
