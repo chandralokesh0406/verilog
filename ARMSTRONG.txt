@@ -1,8 +1,6 @@
-ARMSTRONG number:
-
 module armstrong(clk,reset,num,out);
   input  wire clk,reset;
-  input  wire [31:0]num;
+  input  wire [127:0]num;
   
   output reg out;
   
@@ -11,14 +9,28 @@ module armstrong(clk,reset,num,out);
   parameter s2 = 2'b10;
   
   
-  //parameter width = 32;
-   reg [31:0] digit;
-  reg [31:0] sum;
+ 
+  reg [127:0] digit;
+  reg [127:0] sum;
+  
+ 
   
   
   reg [1:0] current_state,next_state;
   
-  //9reg [31:0]count;
+  
+  reg [15:0] count;  // upto 65535 increments it can able to done
+  reg [127:0] temp; // temp copy of num, adjust width as needed
+
+always @(*) begin
+    count = 0;
+    temp = num;  
+    while (temp > 0) begin
+        temp = temp / 10;
+        count = count + 1;
+    end
+end
+
   
   
   always @(*) begin
@@ -64,7 +76,7 @@ module armstrong(clk,reset,num,out);
               end
             s1:
               begin
-                sum <= sum + ((digit % 10) * (digit % 10) * (digit % 10));
+                sum <= sum + ((digit%10) ** count);
                 digit <= digit/10;
               end
             s2:
@@ -77,12 +89,12 @@ module armstrong(clk,reset,num,out);
           endcase
         end
     end
-endmodule
+Endmodule
 
 Testbench:
 module tb;
   reg clk,reset;
-  reg [31:0] num;
+  reg [127:0] num;
   wire out;
   
   armstrong u1(.out(out),.num(num),.reset(reset),.clk(clk));
@@ -99,8 +111,8 @@ module tb;
       
       reset = 0; #10;
       reset = 1;                                                                                                             
-      num = 153;
-      #135;
+      num = 128'd115132219018763992565095597973971522401;
+      #430;
       $finish;
     end
   
@@ -111,30 +123,91 @@ module tb;
 endmodule
 
 Output:
-# KERNEL: time=0,clk=0,reset=0,num=x,out=0
+
+time=0,clk=0,reset=0,num=x,out=0
 # KERNEL: time=5,clk=1,reset=0,num=x,out=0
-# KERNEL: time=10,clk=0,reset=1,num=153,out=0
-# KERNEL: time=15,clk=1,reset=1,num=153,out=0
-# KERNEL: time=20,clk=0,reset=1,num=153,out=0
-# KERNEL: time=25,clk=1,reset=1,num=153,out=0
-# KERNEL: time=30,clk=0,reset=1,num=153,out=0
-# KERNEL: time=35,clk=1,reset=1,num=153,out=0
-# KERNEL: time=40,clk=0,reset=1,num=153,out=0
-# KERNEL: time=45,clk=1,reset=1,num=153,out=0
-# KERNEL: time=50,clk=0,reset=1,num=153,out=0
-# KERNEL: time=55,clk=1,reset=1,num=153,out=0
-# KERNEL: time=60,clk=0,reset=1,num=153,out=0
-# KERNEL: time=65,clk=1,reset=1,num=153,out=1
-# KERNEL: time=70,clk=0,reset=1,num=153,out=1
-# KERNEL: time=75,clk=1,reset=1,num=153,out=0
-# KERNEL: time=80,clk=0,reset=1,num=153,out=0
-# KERNEL: time=85,clk=1,reset=1,num=153,out=0
-# KERNEL: time=90,clk=0,reset=1,num=153,out=0
-# KERNEL: time=95,clk=1,reset=1,num=153,out=0
-# KERNEL: time=100,clk=0,reset=1,num=153,out=0
-# KERNEL: time=105,clk=1,reset=1,num=153,out=0
-# KERNEL: time=110,clk=0,reset=1,num=153,out=0
-# KERNEL: time=115,clk=1,reset=1,num=153,out=0
-# KERNEL: time=120,clk=0,reset=1,num=153,out=0
-# KERNEL: time=125,clk=1,reset=1,num=153,out=1
-# KERNEL: time=130,clk=0,reset=1,num=153,out=1
+# KERNEL: time=10,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=15,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=20,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=25,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=30,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=35,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=40,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=45,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=50,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=55,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=60,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=65,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=70,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=75,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=80,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=85,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=90,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=95,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=100,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=105,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=110,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=115,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=120,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=125,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=130,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=135,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=140,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=145,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=150,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=155,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=160,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=165,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=170,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=175,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=180,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=185,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=190,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=195,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=200,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=205,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=210,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=215,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=220,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=225,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=230,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=235,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=240,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=245,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=250,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=255,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=260,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=265,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=270,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=275,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=280,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=285,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=290,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=295,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=300,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=305,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=310,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=315,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=320,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=325,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=330,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=335,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=340,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=345,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=350,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=355,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=360,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=365,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=370,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=375,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=380,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=385,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=390,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=395,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=400,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=405,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=410,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=415,clk=1,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=420,clk=0,reset=1,num=115132219018763992565095597973971522401,out=0
+# KERNEL: time=425,clk=1,reset=1,num=115132219018763992565095597973971522401,out=1
+# KERNEL: time=430,clk=0,reset=1,num=115132219018763992565095597973971522401,out=1
