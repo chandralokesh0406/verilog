@@ -1,0 +1,289 @@
+SUM OF NATURAL WITH FSM:
+
+module sum_of_all_natural_numbers(clk,reset,num,out);
+  input clk,reset;
+  input [127:0]num;
+  output reg [127:0]out;
+  
+  
+  reg [127:0]digit;
+  
+  parameter s0 = 2'b00;
+  parameter s1 = 2'b01;
+  
+  reg [1:0]current_state,next_state;
+  
+  
+  always @(*) begin
+    next_state = current_state;
+    case(current_state)
+      s0:
+        begin
+          next_state = s1;
+        end
+      s1:
+        begin
+          next_state = s1;
+        end
+    endcase
+  end
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset)
+      begin
+        current_state <= s0;
+        digit <= 0;
+      end
+    else
+      begin
+        current_state <= next_state;
+        case(current_state)
+          s0:
+            begin
+              digit <= num;
+            end
+          s1:
+            begin
+              out <= digit;
+              digit <= digit + 1;
+            end
+        endcase
+      end
+    end
+endmodule
+  
+
+Tb:
+module tb;
+  reg clk,reset;
+  reg [127:0]num;
+  wire [127:0]out;
+  
+  sum_of_all_natural_numbers u1(.out(out),.num(num),.reset(reset),.clk(clk));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0; #5;
+      num = 0;
+      reset = 1;
+      
+      #1000;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,num=%0d,out=%0d",$time,clk,reset,num,out);
+    end
+endmodule
+
+Output:
+# KERNEL: time=0,clk=0,reset=0,num=x,out=x
+# KERNEL: time=5,clk=1,reset=1,num=0,out=x
+# KERNEL: time=10,clk=0,reset=1,num=0,out=x
+# KERNEL: time=15,clk=1,reset=1,num=0,out=0
+# KERNEL: time=20,clk=0,reset=1,num=0,out=0
+# KERNEL: time=25,clk=1,reset=1,num=0,out=1
+# KERNEL: time=30,clk=0,reset=1,num=0,out=1
+# KERNEL: time=35,clk=1,reset=1,num=0,out=2
+# KERNEL: time=40,clk=0,reset=1,num=0,out=2
+# KERNEL: time=45,clk=1,reset=1,num=0,out=3
+# KERNEL: time=50,clk=0,reset=1,num=0,out=3
+# KERNEL: time=55,clk=1,reset=1,num=0,out=4
+# KERNEL: time=60,clk=0,reset=1,num=0,out=4
+# KERNEL: time=65,clk=1,reset=1,num=0,out=5
+# KERNEL: time=70,clk=0,reset=1,num=0,out=5
+# KERNEL: time=75,clk=1,reset=1,num=0,out=6
+# KERNEL: time=80,clk=0,reset=1,num=0,out=6
+# KERNEL: time=85,clk=1,reset=1,num=0,out=7
+# KERNEL: time=90,clk=0,reset=1,num=0,out=7
+# KERNEL: time=95,clk=1,reset=1,num=0,out=8
+# KERNEL: time=100,clk=0,reset=1,num=0,out=8
+# KERNEL: time=105,clk=1,reset=1,num=0,out=9
+# KERNEL: time=110,clk=0,reset=1,num=0,out=9
+# KERNEL: time=115,clk=1,reset=1,num=0,out=10
+# KERNEL: time=120,clk=0,reset=1,num=0,out=10
+# KERNEL: time=125,clk=1,reset=1,num=0,out=11
+# KERNEL: time=130,clk=0,reset=1,num=0,out=11
+# KERNEL: time=135,clk=1,reset=1,num=0,out=12
+# KERNEL: time=140,clk=0,reset=1,num=0,out=12
+# KERNEL: time=145,clk=1,reset=1,num=0,out=13
+# KERNEL: time=150,clk=0,reset=1,num=0,out=13
+# KERNEL: time=155,clk=1,reset=1,num=0,out=14
+# KERNEL: time=160,clk=0,reset=1,num=0,out=14
+# KERNEL: time=165,clk=1,reset=1,num=0,out=15
+# KERNEL: time=170,clk=0,reset=1,num=0,out=15
+# KERNEL: time=175,clk=1,reset=1,num=0,out=16
+# KERNEL: time=180,clk=0,reset=1,num=0,out=16
+# KERNEL: time=185,clk=1,reset=1,num=0,out=17
+# KERNEL: time=190,clk=0,reset=1,num=0,out=17
+# KERNEL: time=195,clk=1,reset=1,num=0,out=18
+# KERNEL: time=200,clk=0,reset=1,num=0,out=18
+# KERNEL: time=205,clk=1,reset=1,num=0,out=19
+# KERNEL: time=210,clk=0,reset=1,num=0,out=19
+# KERNEL: time=215,clk=1,reset=1,num=0,out=20
+# KERNEL: time=220,clk=0,reset=1,num=0,out=20
+# KERNEL: time=225,clk=1,reset=1,num=0,out=21
+# KERNEL: time=230,clk=0,reset=1,num=0,out=21
+# KERNEL: time=235,clk=1,reset=1,num=0,out=22
+# KERNEL: time=240,clk=0,reset=1,num=0,out=22
+# KERNEL: time=245,clk=1,reset=1,num=0,out=23
+# KERNEL: time=250,clk=0,reset=1,num=0,out=23
+# KERNEL: time=255,clk=1,reset=1,num=0,out=24
+# KERNEL: time=260,clk=0,reset=1,num=0,out=24
+# KERNEL: time=265,clk=1,reset=1,num=0,out=25
+# KERNEL: time=270,clk=0,reset=1,num=0,out=25
+# KERNEL: time=275,clk=1,reset=1,num=0,out=26
+# KERNEL: time=280,clk=0,reset=1,num=0,out=26
+# KERNEL: time=285,clk=1,reset=1,num=0,out=27
+# KERNEL: time=290,clk=0,reset=1,num=0,out=27
+# KERNEL: time=295,clk=1,reset=1,num=0,out=28
+# KERNEL: time=300,clk=0,reset=1,num=0,out=28
+# KERNEL: time=305,clk=1,reset=1,num=0,out=29
+# KERNEL: time=310,clk=0,reset=1,num=0,out=29
+# KERNEL: time=315,clk=1,reset=1,num=0,out=30
+# KERNEL: time=320,clk=0,reset=1,num=0,out=30
+# KERNEL: time=325,clk=1,reset=1,num=0,out=31
+# KERNEL: time=330,clk=0,reset=1,num=0,out=31
+# KERNEL: time=335,clk=1,reset=1,num=0,out=32
+# KERNEL: time=340,clk=0,reset=1,num=0,out=32
+# KERNEL: time=345,clk=1,reset=1,num=0,out=33
+# KERNEL: time=350,clk=0,reset=1,num=0,out=33
+# KERNEL: time=355,clk=1,reset=1,num=0,out=34
+# KERNEL: time=360,clk=0,reset=1,num=0,out=34
+# KERNEL: time=365,clk=1,reset=1,num=0,out=35
+# KERNEL: time=370,clk=0,reset=1,num=0,out=35
+# KERNEL: time=375,clk=1,reset=1,num=0,out=36
+# KERNEL: time=380,clk=0,reset=1,num=0,out=36
+# KERNEL: time=385,clk=1,reset=1,num=0,out=37
+# KERNEL: time=390,clk=0,reset=1,num=0,out=37
+# KERNEL: time=395,clk=1,reset=1,num=0,out=38
+# KERNEL: time=400,clk=0,reset=1,num=0,out=38
+# KERNEL: time=405,clk=1,reset=1,num=0,out=39
+# KERNEL: time=410,clk=0,reset=1,num=0,out=39
+# KERNEL: time=415,clk=1,reset=1,num=0,out=40
+# KERNEL: time=420,clk=0,reset=1,num=0,out=40
+# KERNEL: time=425,clk=1,reset=1,num=0,out=41
+# KERNEL: time=430,clk=0,reset=1,num=0,out=41
+# KERNEL: time=435,clk=1,reset=1,num=0,out=42
+# KERNEL: time=440,clk=0,reset=1,num=0,out=42
+# KERNEL: time=445,clk=1,reset=1,num=0,out=43
+# KERNEL: time=450,clk=0,reset=1,num=0,out=43
+# KERNEL: time=455,clk=1,reset=1,num=0,out=44
+# KERNEL: time=460,clk=0,reset=1,num=0,out=44
+# KERNEL: time=465,clk=1,reset=1,num=0,out=45
+# KERNEL: time=470,clk=0,reset=1,num=0,out=45
+# KERNEL: time=475,clk=1,reset=1,num=0,out=46
+# KERNEL: time=480,clk=0,reset=1,num=0,out=46
+# KERNEL: time=485,clk=1,reset=1,num=0,out=47
+# KERNEL: time=490,clk=0,reset=1,num=0,out=47
+# KERNEL: time=495,clk=1,reset=1,num=0,out=48
+# KERNEL: time=500,clk=0,reset=1,num=0,out=48
+# KERNEL: time=505,clk=1,reset=1,num=0,out=49
+# KERNEL: time=510,clk=0,reset=1,num=0,out=49
+# KERNEL: time=515,clk=1,reset=1,num=0,out=50
+# KERNEL: time=520,clk=0,reset=1,num=0,out=50
+# KERNEL: time=525,clk=1,reset=1,num=0,out=51
+# KERNEL: time=530,clk=0,reset=1,num=0,out=51
+# KERNEL: time=535,clk=1,reset=1,num=0,out=52
+# KERNEL: time=540,clk=0,reset=1,num=0,out=52
+# KERNEL: time=545,clk=1,reset=1,num=0,out=53
+# KERNEL: time=550,clk=0,reset=1,num=0,out=53
+# KERNEL: time=555,clk=1,reset=1,num=0,out=54
+# KERNEL: time=560,clk=0,reset=1,num=0,out=54
+# KERNEL: time=565,clk=1,reset=1,num=0,out=55
+# KERNEL: time=570,clk=0,reset=1,num=0,out=55
+# KERNEL: time=575,clk=1,reset=1,num=0,out=56
+# KERNEL: time=580,clk=0,reset=1,num=0,out=56
+# KERNEL: time=585,clk=1,reset=1,num=0,out=57
+# KERNEL: time=590,clk=0,reset=1,num=0,out=57
+# KERNEL: time=595,clk=1,reset=1,num=0,out=58
+# KERNEL: time=600,clk=0,reset=1,num=0,out=58
+# KERNEL: time=605,clk=1,reset=1,num=0,out=59
+# KERNEL: time=610,clk=0,reset=1,num=0,out=59
+# KERNEL: time=615,clk=1,reset=1,num=0,out=60
+# KERNEL: time=620,clk=0,reset=1,num=0,out=60
+# KERNEL: time=625,clk=1,reset=1,num=0,out=61
+# KERNEL: time=630,clk=0,reset=1,num=0,out=61
+# KERNEL: time=635,clk=1,reset=1,num=0,out=62
+# KERNEL: time=640,clk=0,reset=1,num=0,out=62
+# KERNEL: time=645,clk=1,reset=1,num=0,out=63
+# KERNEL: time=650,clk=0,reset=1,num=0,out=63
+# KERNEL: time=655,clk=1,reset=1,num=0,out=64
+# KERNEL: time=660,clk=0,reset=1,num=0,out=64
+# KERNEL: time=665,clk=1,reset=1,num=0,out=65
+# KERNEL: time=670,clk=0,reset=1,num=0,out=65
+# KERNEL: time=675,clk=1,reset=1,num=0,out=66
+# KERNEL: time=680,clk=0,reset=1,num=0,out=66
+# KERNEL: time=685,clk=1,reset=1,num=0,out=67
+# KERNEL: time=690,clk=0,reset=1,num=0,out=67
+# KERNEL: time=695,clk=1,reset=1,num=0,out=68
+# KERNEL: time=700,clk=0,reset=1,num=0,out=68
+# KERNEL: time=705,clk=1,reset=1,num=0,out=69
+# KERNEL: time=710,clk=0,reset=1,num=0,out=69
+# KERNEL: time=715,clk=1,reset=1,num=0,out=70
+# KERNEL: time=720,clk=0,reset=1,num=0,out=70
+# KERNEL: time=725,clk=1,reset=1,num=0,out=71
+# KERNEL: time=730,clk=0,reset=1,num=0,out=71
+# KERNEL: time=735,clk=1,reset=1,num=0,out=72
+# KERNEL: time=740,clk=0,reset=1,num=0,out=72
+# KERNEL: time=745,clk=1,reset=1,num=0,out=73
+# KERNEL: time=750,clk=0,reset=1,num=0,out=73
+# KERNEL: time=755,clk=1,reset=1,num=0,out=74
+# KERNEL: time=760,clk=0,reset=1,num=0,out=74
+# KERNEL: time=765,clk=1,reset=1,num=0,out=75
+# KERNEL: time=770,clk=0,reset=1,num=0,out=75
+# KERNEL: time=775,clk=1,reset=1,num=0,out=76
+# KERNEL: time=780,clk=0,reset=1,num=0,out=76
+# KERNEL: time=785,clk=1,reset=1,num=0,out=77
+# KERNEL: time=790,clk=0,reset=1,num=0,out=77
+# KERNEL: time=795,clk=1,reset=1,num=0,out=78
+# KERNEL: time=800,clk=0,reset=1,num=0,out=78
+# KERNEL: time=805,clk=1,reset=1,num=0,out=79
+# KERNEL: time=810,clk=0,reset=1,num=0,out=79
+# KERNEL: time=815,clk=1,reset=1,num=0,out=80
+# KERNEL: time=820,clk=0,reset=1,num=0,out=80
+# KERNEL: time=825,clk=1,reset=1,num=0,out=81
+# KERNEL: time=830,clk=0,reset=1,num=0,out=81
+# KERNEL: time=835,clk=1,reset=1,num=0,out=82
+# KERNEL: time=840,clk=0,reset=1,num=0,out=82
+# KERNEL: time=845,clk=1,reset=1,num=0,out=83
+# KERNEL: time=850,clk=0,reset=1,num=0,out=83
+# KERNEL: time=855,clk=1,reset=1,num=0,out=84
+# KERNEL: time=860,clk=0,reset=1,num=0,out=84
+# KERNEL: time=865,clk=1,reset=1,num=0,out=85
+# KERNEL: time=870,clk=0,reset=1,num=0,out=85
+# KERNEL: time=875,clk=1,reset=1,num=0,out=86
+# KERNEL: time=880,clk=0,reset=1,num=0,out=86
+# KERNEL: time=885,clk=1,reset=1,num=0,out=87
+# KERNEL: time=890,clk=0,reset=1,num=0,out=87
+# KERNEL: time=895,clk=1,reset=1,num=0,out=88
+# KERNEL: time=900,clk=0,reset=1,num=0,out=88
+# KERNEL: time=905,clk=1,reset=1,num=0,out=89
+# KERNEL: time=910,clk=0,reset=1,num=0,out=89
+# KERNEL: time=915,clk=1,reset=1,num=0,out=90
+# KERNEL: time=920,clk=0,reset=1,num=0,out=90
+# KERNEL: time=925,clk=1,reset=1,num=0,out=91
+# KERNEL: time=930,clk=0,reset=1,num=0,out=91
+# KERNEL: time=935,clk=1,reset=1,num=0,out=92
+# KERNEL: time=940,clk=0,reset=1,num=0,out=92
+# KERNEL: time=945,clk=1,reset=1,num=0,out=93
+# KERNEL: time=950,clk=0,reset=1,num=0,out=93
+# KERNEL: time=955,clk=1,reset=1,num=0,out=94
+# KERNEL: time=960,clk=0,reset=1,num=0,out=94
+# KERNEL: time=965,clk=1,reset=1,num=0,out=95
+# KERNEL: time=970,clk=0,reset=1,num=0,out=95
+# KERNEL: time=975,clk=1,reset=1,num=0,out=96
+# KERNEL: time=980,clk=0,reset=1,num=0,out=96
+# KERNEL: time=985,clk=1,reset=1,num=0,out=97
+# KERNEL: time=990,clk=0,reset=1,num=0,out=97
+# KERNEL: time=995,clk=1,reset=1,num=0,out=98
+# KERNEL: time=1000,clk=0,reset=1,num=0,out=98
+# RUNTIME: Info: RUNTIME_0068 testbench.sv (21): $finish called.
