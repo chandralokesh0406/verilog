@@ -1,0 +1,303 @@
+module prime_between_two_ranges(clk,reset,num1,num2,prime);
+  input clk,reset;
+  input [127:0]num1;
+  input [127:0]num2;
+  
+  output reg [127:0]prime;
+  
+  
+  parameter s0 = 2'b00;
+  parameter s1 = 2'b01;
+  parameter s2 = 2'b10;
+  
+  reg [127:0]digit;
+  reg [127:0]num;
+  reg is_prime;
+  reg [127:0]i;
+  
+  reg [1:0] next_state,current_state;
+  
+  always @(*) begin
+    next_state = current_state;
+    case(current_state)
+      s0:
+        begin
+          next_state = s1;
+        end
+      s1:
+        begin
+          if( i < num)
+            next_state = s1;
+          else
+            next_state = s2;
+        end
+      s2:
+        begin
+          if( num < digit)
+            next_state = s1;
+          else
+            next_state = s0;
+        end
+    endcase
+  end
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset)
+      begin
+        current_state <= s0;
+        digit <= 0;
+        num <= 0;
+        prime <= 0;
+        is_prime <= 1;
+        i <= 2;
+      end
+    else
+      begin
+        current_state <= next_state;
+        case(current_state)
+          s0:
+            begin
+              num <= num1;
+              digit <= num2;
+              prime <= 0;
+              is_prime <= 1;
+              i <= 2;
+            end
+          s1:
+            begin
+              if( i < num && num % i == 0) begin
+                is_prime <= 0;
+                i <= num;
+              end
+              else
+                i <= i + 1;
+            end
+          s2:
+            begin
+              if(is_prime)
+                prime <= prime + 1;
+              num <= num+1;
+              i <= 2;
+              is_prime <= 1;
+            end
+        endcase
+      end
+  end
+endmodule
+            
+              
+module tb;
+  reg clk,reset;
+  reg [127:0]num1,num2;
+  wire [127:0]prime;
+  
+  
+  prime_between_two_ranges u1(.clk(clk),.reset(reset),.num1(num1),.num2(num2),.prime(prime));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0; 
+      num1 = 11;
+      num2 = 20;
+      #10;
+      reset = 1;
+      
+      #900;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,num1=%0d,num2=%0d,prime=%0d",$time,clk,reset,num1,num2,prime);
+    end
+endmodule
+
+# KERNEL: time=0,clk=0,reset=0,num1=11,num2=20,prime=0
+# KERNEL: time=5,clk=1,reset=0,num1=11,num2=20,prime=0
+# KERNEL: time=10,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=15,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=20,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=25,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=30,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=35,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=40,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=45,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=50,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=55,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=60,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=65,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=70,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=75,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=80,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=85,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=90,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=95,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=100,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=105,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=110,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=115,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=120,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=125,clk=1,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=130,clk=0,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=135,clk=1,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=140,clk=0,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=145,clk=1,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=150,clk=0,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=155,clk=1,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=160,clk=0,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=165,clk=1,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=170,clk=0,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=175,clk=1,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=180,clk=0,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=185,clk=1,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=190,clk=0,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=195,clk=1,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=200,clk=0,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=205,clk=1,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=210,clk=0,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=215,clk=1,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=220,clk=0,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=225,clk=1,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=230,clk=0,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=235,clk=1,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=240,clk=0,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=245,clk=1,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=250,clk=0,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=255,clk=1,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=260,clk=0,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=265,clk=1,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=270,clk=0,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=275,clk=1,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=280,clk=0,reset=1,num1=11,num2=20,prime=1
+# KERNEL: time=285,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=290,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=295,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=300,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=305,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=310,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=315,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=320,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=325,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=330,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=335,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=340,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=345,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=350,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=355,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=360,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=365,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=370,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=375,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=380,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=385,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=390,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=395,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=400,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=405,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=410,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=415,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=420,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=425,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=430,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=435,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=440,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=445,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=450,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=455,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=460,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=465,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=470,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=475,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=480,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=485,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=490,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=495,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=500,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=505,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=510,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=515,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=520,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=525,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=530,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=535,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=540,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=545,clk=1,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=550,clk=0,reset=1,num1=11,num2=20,prime=2
+# KERNEL: time=555,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=560,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=565,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=570,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=575,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=580,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=585,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=590,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=595,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=600,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=605,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=610,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=615,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=620,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=625,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=630,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=635,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=640,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=645,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=650,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=655,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=660,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=665,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=670,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=675,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=680,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=685,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=690,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=695,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=700,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=705,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=710,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=715,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=720,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=725,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=730,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=735,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=740,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=745,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=750,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=755,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=760,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=765,clk=1,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=770,clk=0,reset=1,num1=11,num2=20,prime=3
+# KERNEL: time=775,clk=1,reset=1,num1=11,num2=20,prime=4
+# KERNEL: time=780,clk=0,reset=1,num1=11,num2=20,prime=4
+# KERNEL: time=785,clk=1,reset=1,num1=11,num2=20,prime=4
+# KERNEL: time=790,clk=0,reset=1,num1=11,num2=20,prime=4
+# KERNEL: time=795,clk=1,reset=1,num1=11,num2=20,prime=4
+# KERNEL: time=800,clk=0,reset=1,num1=11,num2=20,prime=4
+# KERNEL: time=805,clk=1,reset=1,num1=11,num2=20,prime=4
+# KERNEL: time=810,clk=0,reset=1,num1=11,num2=20,prime=4
+# KERNEL: time=815,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=820,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=825,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=830,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=835,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=840,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=845,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=850,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=855,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=860,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=865,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=870,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=875,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=880,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=885,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=890,clk=0,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=895,clk=1,reset=1,num1=11,num2=20,prime=0
+# KERNEL: time=900,clk=0,reset=1,num1=11,num2=20,prime=0
+
