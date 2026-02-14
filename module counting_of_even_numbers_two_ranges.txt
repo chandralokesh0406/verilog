@@ -1,0 +1,135 @@
+module counting_of_even_numbers_two_ranges(clk,reset,num1,num2,even);
+  input clk,reset;
+  input  [127:0]num1;
+  input  [127:0]num2;
+  
+  output reg [127:0]even;
+  
+  
+  parameter s0 = 2'b00;
+  parameter s1 = 2'b01;
+  
+  reg [127:0]num;
+  reg [127:0]digit;
+  
+  int i;
+  
+  
+  reg [1:0]current_state,next_state;
+  
+  always @(*) begin
+    next_state = current_state;
+    case(current_state)
+      s0:
+        begin
+          next_state = s1;
+        end
+      s1:
+        begin
+          if(num < digit)
+            next_state = s1;
+          else
+            next_state = s0;
+        end
+    endcase
+  end
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset)
+      begin
+        current_state <= s0;
+        num <= num1;
+        digit <= num2;
+        even <= 0;
+        i <= 2;
+      end
+    else
+      begin
+        current_state <= next_state;
+        case(current_state)
+          s0:
+            begin
+              num <= num1;
+              digit <= num2;
+              i <= 2;
+              even = 0;
+            end
+          s1:
+            begin
+              if( num < digit && num % i == 0) begin
+                even <= even +1;
+                num <= num+1;
+                i <= 2;
+              end
+              else
+                num <= num+1;
+            end
+        endcase
+      end
+  end
+endmodule
+  
+
+TB:
+module tb;
+  reg clk,reset;
+  reg [127:0]num1;
+  reg [127:0]num2;
+  wire [127:0]even;
+  
+  counting_of_even_numbers_two_ranges u1(.clk(clk),.reset(reset),.num1(num1),.num2(num2),.even(even));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0;
+      num1 = 10;
+      num2 = 20;
+      #10;
+      reset = 1;
+      #140;
+      $finish;
+    end
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,num1=%0d,num2=%0d,even=%0d",$time,clk,reset,num1,num2,even);
+    end
+endmodule
+
+OUTPUT:
+# KERNEL: time=0,clk=0,reset=0,num1=10,num2=20,even=0
+# KERNEL: time=5,clk=1,reset=0,num1=10,num2=20,even=0
+# KERNEL: time=10,clk=0,reset=1,num1=10,num2=20,even=0
+# KERNEL: time=15,clk=1,reset=1,num1=10,num2=20,even=0
+# KERNEL: time=20,clk=0,reset=1,num1=10,num2=20,even=0
+# KERNEL: time=25,clk=1,reset=1,num1=10,num2=20,even=1
+# KERNEL: time=30,clk=0,reset=1,num1=10,num2=20,even=1
+# KERNEL: time=35,clk=1,reset=1,num1=10,num2=20,even=1
+# KERNEL: time=40,clk=0,reset=1,num1=10,num2=20,even=1
+# KERNEL: time=45,clk=1,reset=1,num1=10,num2=20,even=2
+# KERNEL: time=50,clk=0,reset=1,num1=10,num2=20,even=2
+# KERNEL: time=55,clk=1,reset=1,num1=10,num2=20,even=2
+# KERNEL: time=60,clk=0,reset=1,num1=10,num2=20,even=2
+# KERNEL: time=65,clk=1,reset=1,num1=10,num2=20,even=3
+# KERNEL: time=70,clk=0,reset=1,num1=10,num2=20,even=3
+# KERNEL: time=75,clk=1,reset=1,num1=10,num2=20,even=3
+# KERNEL: time=80,clk=0,reset=1,num1=10,num2=20,even=3
+# KERNEL: time=85,clk=1,reset=1,num1=10,num2=20,even=4
+# KERNEL: time=90,clk=0,reset=1,num1=10,num2=20,even=4
+# KERNEL: time=95,clk=1,reset=1,num1=10,num2=20,even=4
+# KERNEL: time=100,clk=0,reset=1,num1=10,num2=20,even=4
+# KERNEL: time=105,clk=1,reset=1,num1=10,num2=20,even=5
+# KERNEL: time=110,clk=0,reset=1,num1=10,num2=20,even=5
+# KERNEL: time=115,clk=1,reset=1,num1=10,num2=20,even=5
+# KERNEL: time=120,clk=0,reset=1,num1=10,num2=20,even=5
+# KERNEL: time=125,clk=1,reset=1,num1=10,num2=20,even=5
+# KERNEL: time=130,clk=0,reset=1,num1=10,num2=20,even=5
+# KERNEL: time=135,clk=1,reset=1,num1=10,num2=20,even=0
+# KERNEL: time=140,clk=0,reset=1,num1=10,num2=20,even=0
+# KERNEL: time=145,clk=1,reset=1,num1=10,num2=20,even=1
+# RUNTIME: Info: RUNTIME_0068 testbench.sv (23): $finish called.
