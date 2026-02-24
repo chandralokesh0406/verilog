@@ -1,0 +1,145 @@
+Perfect square of a number:
+
+module finding_perfect_square(clk,reset,num,out);
+  input clk,reset;
+  input [127:0]num;
+  output reg out;
+  
+  reg [127:0]digit;
+  
+  reg [127:0]i;
+  
+  parameter s0 = 2'b00;
+  parameter s1 = 2'b01;
+  parameter s2 = 2'b10;
+  
+  reg [1:0]current_state , next_state;
+  
+  always @(*) begin
+    next_state = current_state;
+    case(current_state)
+      s0:
+        begin
+          next_state = s1;
+        end
+      
+      s1:
+        begin
+          if(i*i >= digit)
+            next_state = s2;
+          else
+            next_state = s1;
+        end
+      s2:
+        begin
+          next_state = s0;
+        end
+    endcase
+  end
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset) begin
+      current_state <= s0;
+      digit <= num;
+      out <= 0;
+      i <= 0;
+    end
+    else
+      begin
+        current_state <= next_state;
+        case(current_state)
+          s0:
+            begin
+              digit <= num;
+              out <= 0;
+              i <= 0;
+            end
+          s1:
+            begin
+              if( i*i == digit)
+                out <= 1;
+              else
+                i <= i+1;
+            end
+          s2:
+            begin
+            end
+        endcase
+      end
+  end
+endmodule
+              
+    
+Tb:
+module tb;
+  reg clk,reset;
+  reg [127:0]num;
+  wire out;
+  
+  finding_perfect_square u1(.out(out),.num(num),.reset(reset),.clk(clk));
+  
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0;
+      num = 16; #10;
+      reset = 1;
+      #100;
+      $finish;
+    end
+  
+  initial
+    begin
+      
+      $monitor("clk=%0b,reset=%0b,num=%0d,out=%0b",clk,reset,num,out);
+    end
+Endmodule
+
+clk=0,reset=0,num=16,out=0
+# KERNEL: clk=1,reset=0,num=16,out=0
+# KERNEL: clk=0,reset=1,num=16,out=0
+# KERNEL: clk=1,reset=1,num=16,out=0
+# KERNEL: clk=0,reset=1,num=16,out=0
+# KERNEL: clk=1,reset=1,num=16,out=0
+# KERNEL: clk=0,reset=1,num=16,out=0
+# KERNEL: clk=1,reset=1,num=16,out=0
+# KERNEL: clk=0,reset=1,num=16,out=0
+# KERNEL: clk=1,reset=1,num=16,out=0
+# KERNEL: clk=0,reset=1,num=16,out=0
+# KERNEL: clk=1,reset=1,num=16,out=0
+# KERNEL: clk=0,reset=1,num=16,out=0
+# KERNEL: clk=1,reset=1,num=16,out=1
+# KERNEL: clk=0,reset=1,num=16,out=1
+# KERNEL: clk=1,reset=1,num=16,out=1       --->here the state is in s2 that’s why it takes another clock cycle to change the state from s2 to s0 this is the reason why it shows the output as 1.
+# KERNEL: clk=0,reset=1,num=16,out=1
+# KERNEL: clk=1,reset=1,num=16,out=0
+# KERNEL: clk=0,reset=1,num=16,out=0
+# KERNEL: clk=1,reset=1,num=16,out=0
+# KERNEL: clk=0,reset=1,num=16,out=0
+# KERNEL: clk=1,reset=1,num=16,out=0
+# KERNEL: clk=0,reset=1,num=16,out=0
+# KERNEL: clk=1,reset=1,num=16,out=0
+# KERNEL: clk=0,reset=1,num=16,out=0
+# KERNEL: clk=1,reset=1,num=16,out=0
+# KERNEL: clk=0,reset=1,num=16,out=0
+# KERNEL: clk=1,reset=1,num=16,out=1
+# KERNEL: clk=0,reset=1,num=16,out=1
+# KERNEL: clk=1,reset=1,num=16,out=1
+# KERNEL: clk=0,reset=1,num=16,out=1
+# KERNEL: clk=1,reset=1,num=16,out=0
+# KERNEL: clk=0,reset=1,num=16,out=0
+# KERNEL: clk=1,reset=1,num=16,out=0
+# KERNEL: clk=0,reset=1,num=16,out=0
+# KERNEL: clk=1,reset=1,num=16,out=0
+# KERNEL: clk=0,reset=1,num=16,out=0
+# KERNEL: clk=1,reset=1,num=16,out=0
+# KERNEL: clk=0,reset=1,num=16,out=0
+# KERNEL: clk=1,reset=1,num=16,out=0
+# KERNEL: clk=0,reset=1,num=16,out=0
+# KERNEL: clk=1,reset=1,num=16,out=1
