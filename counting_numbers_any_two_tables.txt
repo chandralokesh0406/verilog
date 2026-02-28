@@ -1,0 +1,125 @@
+counting_numbers_any_two_tables:
+module counting_numbers_any_two_tables(clk,reset,num1,num2,count);
+  input clk,reset;
+  input [7:0]num1,num2;
+  output reg [15:0]count;
+  
+  reg [7:0] digit1,digit2;
+  
+  reg [15:0]i;
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset) begin
+      i <= 1;
+      digit1 <= num1;
+      digit2 <= num2;
+      count <= 0;
+    end
+    else if( i % digit1 == 0 && i % digit2 == 0) begin
+      count <= count+1;
+      i <= i+1;
+    end
+    else
+      i <= i+1;
+  end
+endmodule
+
+
+
+Tb:
+module tb;
+  reg clk,reset;
+  reg [7:0]num1,num2;
+  wire [15:0]count;
+  
+  counting_numbers_any_two_tables u1(.count(count),.num2(num2),.num1(num1),.reset(reset),.clk(clk));
+  
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  
+  initial
+    begin
+      reset=0;
+      num1 = 3;
+      num2 = 5;
+      #10;
+      reset=1;
+      #300;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,num1=%0d,num2=%0d,count=%0d",$time,clk,reset,num1,num2,count);
+    end
+endmodule
+
+Output:
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: time=0,clk=0,reset=0,num1=3,num2=5,count=0
+# KERNEL: time=5,clk=1,reset=0,num1=3,num2=5,count=0
+# KERNEL: time=10,clk=0,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=15,clk=1,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=20,clk=0,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=25,clk=1,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=30,clk=0,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=35,clk=1,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=40,clk=0,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=45,clk=1,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=50,clk=0,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=55,clk=1,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=60,clk=0,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=65,clk=1,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=70,clk=0,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=75,clk=1,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=80,clk=0,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=85,clk=1,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=90,clk=0,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=95,clk=1,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=100,clk=0,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=105,clk=1,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=110,clk=0,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=115,clk=1,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=120,clk=0,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=125,clk=1,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=130,clk=0,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=135,clk=1,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=140,clk=0,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=145,clk=1,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=150,clk=0,reset=1,num1=3,num2=5,count=0
+# KERNEL: time=155,clk=1,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=160,clk=0,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=165,clk=1,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=170,clk=0,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=175,clk=1,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=180,clk=0,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=185,clk=1,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=190,clk=0,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=195,clk=1,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=200,clk=0,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=205,clk=1,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=210,clk=0,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=215,clk=1,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=220,clk=0,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=225,clk=1,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=230,clk=0,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=235,clk=1,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=240,clk=0,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=245,clk=1,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=250,clk=0,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=255,clk=1,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=260,clk=0,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=265,clk=1,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=270,clk=0,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=275,clk=1,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=280,clk=0,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=285,clk=1,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=290,clk=0,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=295,clk=1,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=300,clk=0,reset=1,num1=3,num2=5,count=1
+# KERNEL: time=305,clk=1,reset=1,num1=3,num2=5,count=2
