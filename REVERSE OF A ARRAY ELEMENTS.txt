@@ -1,0 +1,59 @@
+REVERSE OF A ARRAY ELEMENTS:
+
+module reverse_a_array_elemets(clk,reset,arr,arr_1);
+  input clk,reset;
+  input [7:0]arr[0:4];
+  output  reg [7:0]arr_1[0:4];
+  
+  parameter size = 5;
+  int i;
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset)
+      arr_1 <= '{0,0,0,0,0};
+    else
+      begin
+        for( i=0; i<size; i++) begin
+        arr_1[size-1-i] <= arr[i];
+        end
+      end
+  end
+endmodule
+        
+
+Tb:
+module tb;
+  reg clk,reset;
+  reg [7:0]arr[0:4];
+  wire [7:0]arr_1[0:4];
+  
+  reverse_a_array_elemets u1(.arr_1(arr_1),.arr(arr),.reset(reset),.clk(clk));
+  
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0; #5;
+      reset = 1;
+      arr = '{10,20,30,40,50};
+      #10;
+      $finish;
+    end
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,arr=%0p,arr_1=%0p",$time,clk,reset,arr,arr_1);
+    end
+endmodule
+  
+  
+Output:
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: time=0,clk=0,reset=0,arr=x x x x x,arr_1=0 0 0 0 0
+# KERNEL: time=5,clk=1,reset=1,arr=10 20 30 40 50,arr_1=50 40 30 20 10
+# KERNEL: time=10,clk=0,reset=1,arr=10 20 30 40 50,arr_1=50 40 30 20 10
