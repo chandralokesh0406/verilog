@@ -1,3 +1,6 @@
+FIBONACCI SERIES:
+
+
 module fibonacci_series(clk,reset,out);
   input wire clk,reset;
   output reg [31:0]out;
@@ -16,14 +19,12 @@ module fibonacci_series(clk,reset,out);
       begin
         out <= a+b;
         a <= b;
-        b <= out ;  declearing out in place of a+b
+        b <=a+b;  here when we decalare out in place of a+b it takes previous olda values
       end
   end
-Endmodule
+endmodule
 
-
-TESTBENCH:
-
+testbench:
 module tb;
   reg clk,reset;
   wire [31:0]out;
@@ -52,28 +53,27 @@ module tb;
       $monitor("clk=%0b,reset=%0b,out=%0d",clk,reset,out);
     end
 endmodule
-
+  
 Output:
-
 # KERNEL: clk=0,reset=0,out=0
 # KERNEL: clk=1,reset=1,out=1
 # KERNEL: clk=0,reset=1,out=1
-# KERNEL: clk=1,reset=1,out=1
-# KERNEL: clk=0,reset=1,out=1
-# KERNEL: clk=1,reset=1,out=1
-# KERNEL: clk=0,reset=1,out=1
-# KERNEL: clk=1,reset=1,out=2
-# KERNEL: clk=0,reset=1,out=2
 # KERNEL: clk=1,reset=1,out=2
 # KERNEL: clk=0,reset=1,out=2
 # KERNEL: clk=1,reset=1,out=3
 # KERNEL: clk=0,reset=1,out=3
-# KERNEL: clk=1,reset=1,out=4
-# KERNEL: clk=0,reset=1,out=4
 # KERNEL: clk=1,reset=1,out=5
 # KERNEL: clk=0,reset=1,out=5
-# KERNEL: clk=1,reset=1,out=7
-# KERNEL: clk=0,reset=1,out=7
-# KERNEL: clk=1,reset=1,out=9
-# KERNEL: clk=0,reset=1,out=9
+# KERNEL: clk=1,reset=1,out=8
+# KERNEL: clk=0,reset=1,out=8
+# KERNEL: clk=1,reset=1,out=13
+# KERNEL: clk=0,reset=1,out=13
+# KERNEL: clk=1,reset=1,out=21
+# KERNEL: clk=0,reset=1,out=21
+# KERNEL: clk=1,reset=1,out=34
+# KERNEL: clk=0,reset=1,out=34
+# KERNEL: clk=1,reset=1,out=55
+# KERNEL: clk=0,reset=1,out=55
+# KERNEL: clk=1,reset=1,out=89
+# KERNEL: clk=0,reset=1,out=89
 
