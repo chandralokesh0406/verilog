@@ -1,0 +1,72 @@
+greatest common divisor:
+
+module GCD(clk,reset,num1,num2,out);
+  input clk,reset;
+  input [7:0]num1,num2;
+  output reg [7:0]out;
+  
+  reg [7:0]a,b;
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset) begin
+      out <= 0;
+      a <= num1;
+      b <= num2;
+    end
+    else if(a != b) begin
+      if(a > b)
+        a <= a-b;
+      else
+        b <= b-a;
+    end
+    else
+      out = a;
+  end
+endmodule
+
+tb:
+module tb;
+  reg clk,reset;
+  reg [7:0]num1,num2;
+  wire [7:0]out;
+  
+  GCD u1(.out(out),.num2(num2),.num1(num1),.reset(reset),.clk(clk));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset=0;
+      num1=12;
+      num2=18;
+      #5;
+      reset=1;
+      #50;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,num1=%0d,num2=%0d,out=%0d",$time,clk,reset,num1,num2,out);
+    end
+endmodule
+
+output:
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: time=0,clk=0,reset=0,num1=12,num2=18,out=0
+# KERNEL: time=5,clk=1,reset=1,num1=12,num2=18,out=0
+# KERNEL: time=10,clk=0,reset=1,num1=12,num2=18,out=0
+# KERNEL: time=15,clk=1,reset=1,num1=12,num2=18,out=0
+# KERNEL: time=20,clk=0,reset=1,num1=12,num2=18,out=0
+# KERNEL: time=25,clk=1,reset=1,num1=12,num2=18,out=6
+# KERNEL: time=30,clk=0,reset=1,num1=12,num2=18,out=6
+# KERNEL: time=35,clk=1,reset=1,num1=12,num2=18,out=6
+# KERNEL: time=40,clk=0,reset=1,num1=12,num2=18,out=6
+# KERNEL: time=45,clk=1,reset=1,num1=12,num2=18,out=6
+# KERNEL: time=50,clk=0,reset=1,num1=12,num2=18,out=6
+# RUNTIME: Info: RUNTIME_0068 testbench.sv (22): $finish called.
+    
