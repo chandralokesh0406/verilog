@@ -1,0 +1,70 @@
+module summing_in_even_positions(clk,reset,arr,,out);
+  input clk,reset;
+  input [7:0]arr[0:4];
+  output reg [7:0]out;
+  
+  parameter size = 5;
+  
+  int i;
+  
+  reg [7:0]temp_sum;
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset) begin
+      out <= 0;
+      temp_sum <= 0;
+    end
+    else
+      begin
+        for(i=0; i<size; i++) begin
+          if ( i%2 == 0)
+            temp_sum = temp_sum+arr[i];
+        end
+        out = temp_sum;
+        temp_sum <= 0;
+      end
+  end
+endmodule
+      
+
+tb:
+module tb;
+  reg clk,reset;
+  reg [7:0]arr[0:4];
+  wire [7:0]out;
+  
+  
+  summing_in_even_positions u1(.out(out),.arr(arr),.reset(reset),.clk(clk));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0;
+      arr = '{10,20,30,40,50};
+      #5;
+      reset = 1;
+      #20;
+      $finish;
+    end
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,arr=%0p,out=%0d",$time,clk,reset,arr,out);
+    end
+endmodule
+      
+  
+  
+output:
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: time=0,clk=0,reset=0,arr=10 20 30 40 50,out=0
+# KERNEL: time=5,clk=1,reset=1,arr=10 20 30 40 50,out=90
+# KERNEL: time=10,clk=0,reset=1,arr=10 20 30 40 50,out=90
+# KERNEL: time=15,clk=1,reset=1,arr=10 20 30 40 50,out=90
+# KERNEL: time=20,clk=0,reset=1,arr=10 20 30 40 50,out=90
+# RUNTIME: Info: RUNTIME_0068 testbench.sv (22): $finish called.
