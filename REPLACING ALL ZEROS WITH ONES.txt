@@ -1,0 +1,61 @@
+module replacing_all_zreos_with_ones(clk,reset,num,out);
+  input clk,reset;
+  input [7:0]num;
+  output reg[7:0]out;
+  
+  int i;
+  reg [7:0]digit;
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset) begin
+      out <= 8'b0;
+      digit <= num;
+    end
+    else
+      begin
+        for(i=0; i<8; i++) begin
+          if(digit[i] == 0) begin
+            digit[i] = 1;
+            out <= digit;
+          end
+        end
+      end
+  end
+endmodule
+
+tb:
+module tb;
+  reg clk,reset;
+  reg [7:0]num;
+  wire [7:0]out;
+  
+  replacing_all_zreos_with_ones u1(.clk(clk),.reset(reset),.num(num),.out(out));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset=0;
+      num = 8'b10011001;
+      #10;
+      reset=1;
+      #10;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,num=%08b,out=%08b",$time,clk,reset,num,out);
+    end
+endmodule
+
+output:
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: time=0,clk=0,reset=0,num=10011001,out=00000000
+# KERNEL: time=5,clk=1,reset=0,num=10011001,out=00000000
+# KERNEL: time=10,clk=0,reset=1,num=10011001,out=00000000
+# KERNEL: time=15,clk=1,reset=1,num=10011001,out=11111111
