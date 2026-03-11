@@ -1,0 +1,65 @@
+SUM OF DIGITS IN A STRING:
+
+
+module sum_of_the_string(clk,reset,chandu,out);
+  input clk,reset;
+  input string chandu;
+  output reg [7:0]out;
+  
+  reg [7:0]result;
+  
+  parameter size = 3;
+  
+  int i;
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset) begin
+      out <= 0;
+      result <= 0;
+    end
+    else
+      begin
+        for(i=0; i<size; i++) begin
+          result = result+( chandu[i] - "0");
+        end
+        out <= result;
+      end
+  end
+endmodule
+
+Tb:
+module tb;
+  reg clk,reset;
+  string chandu;
+  wire [7:0]out;
+  
+  sum_of_the_string u1(.out(out),.chandu(chandu),.reset(reset),.clk(clk));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset=0;
+      #5;
+      reset=1;
+      chandu = "123";
+      #10;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,chandu=%0s,out=%0d",$time,clk,reset,chandu,out);
+    end
+endmodule
+
+Output:
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: time=0,clk=0,reset=0,chandu=,out=0
+# KERNEL: time=5,clk=1,reset=1,chandu=123,out=6
+# KERNEL: time=10,clk=0,reset=1,chandu=123,out=6
