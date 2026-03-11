@@ -1,0 +1,62 @@
+REVERSE A STRING:
+
+module reverse_a_string(clk,reset,str,rev_str);
+  input clk,reset;
+  input string str;
+  output string rev_str;
+  
+  parameter size = 10;
+  
+  
+  int i;
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset)
+      rev_str <= {size{"0"}};
+    else
+      for(i=0; i<size; i++) begin
+        rev_str[size-1-i] <= str[i];
+      end
+  end
+endmodule
+
+tb:
+module tb;
+  reg clk,reset;
+  string str;
+  string rev_str;
+  
+  
+  reverse_a_string u1(.rev_str(rev_str),.str(str),.reset(reset),.clk(clk));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset=0;
+      str = "chanduvina";
+      #5;
+      reset=1;
+      #20;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,str=%0s,rev_str=%0s",$time,clk,reset,str,rev_str);
+    end
+endmodule
+      
+  
+output:
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: time=0,clk=0,reset=0,str=chanduvina,rev_str=0000000000
+# KERNEL: time=5,clk=1,reset=1,str=chanduvina,rev_str=anivudnahc
+# KERNEL: time=10,clk=0,reset=1,str=chanduvina,rev_str=anivudnahc
+# KERNEL: time=15,clk=1,reset=1,str=chanduvina,rev_str=anivudnahc
+# KERNEL: time=20,clk=0,reset=1,str=chanduvina,rev_str=anivudnahc
+# RUNTIME: Info: RUNTIME_0068 testbench.sv (22): $finish called.
