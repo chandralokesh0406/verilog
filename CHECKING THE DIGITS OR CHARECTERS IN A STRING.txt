@@ -1,0 +1,72 @@
+
+CHECKING THE DIGITS OR CHARECTERS IN A STRING:
+
+module checking_the_digits_or_charecters_in_a_string_or_not(clk,reset,in,charecter,out);
+  input clk,reset;
+  input string in;
+  input string charecter;
+  output reg [7:0]out;
+  
+  int i;
+  string  char;
+  
+  parameter size = 15;
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset) begin
+      out <= 0;
+      char <= charecter;
+    end
+    else
+      begin
+        for(i=0; i<size; i++) begin
+          if(char == in[i]) begin
+            out <= 1;
+          end
+        end
+      end
+  end
+endmodule
+            
+tb:
+module tb;
+  reg clk,reset;
+  string in;
+  string charecter;
+  wire [7:0]out;
+  
+  
+  checking_the_digits_or_charecters_in_a_string_or_not u1(.out(out),.charecter(charecter),.
+                                                          in(in),.reset(reset),.clk(clk));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset=0;
+      in = "p.chandralokesh";
+      charecter = "p";
+      #5;
+      reset=1;
+      #15;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,in=%0s,charecter=%0s,out=%0d",$time,clk,reset,in,charecter,out);
+    end
+endmodule
+
+output:
+# Allocation: Simulator allocated 4540 kB (elbread=427 elab2=4107 kernel=6 sdf=0)
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: time=0,clk=0,reset=0,in=p.chandralokesh,charecter=p,out=0
+# KERNEL: time=5,clk=1,reset=1,in=p.chandralokesh,charecter=p,out=1
+# KERNEL: time=10,clk=0,reset=1,in=p.chandralokesh,charecter=p,out=1
+# KERNEL: time=15,clk=1,reset=1,in=p.chandralokesh,charecter=p,out=1
+# RUNTIME: Info: RUNTIME_0068 testbench.sv (25): $finish called.
