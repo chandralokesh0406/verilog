@@ -1,0 +1,58 @@
+PRIME_NUMBER_USING_FOR_LOOP:
+
+module prime_number_using_for_loop(clk,reset,num,prime);
+  input clk,reset;
+  input [7:0]num;
+  output reg prime;
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset)
+      prime <= 1;
+    else
+      begin
+        for(int i=2; i<num; i++) begin
+          if(num % i == 0)
+            prime <= 0;
+        end
+      end
+  end
+endmodule
+
+tb:
+module tb;
+  reg clk,reset;
+  reg [7:0]num;
+  wire prime;
+  
+  
+  prime_number_using_for_loop u1(.prime(prime),.num(num),.reset(reset),.clk(clk));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0;
+      #5;
+      reset = 1;
+      num = 5;
+      #15;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,num=%0d,prime=%0b",$time,clk,reset,num,prime);
+    end
+endmodule
+
+output:
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: time=0,clk=0,reset=0,num=x,prime=1
+# KERNEL: time=5,clk=1,reset=1,num=5,prime=1
+# KERNEL: time=10,clk=0,reset=1,num=5,prime=1
+# KERNEL: time=15,clk=1,reset=1,num=5,prime=1
+# RUNTIME: Info: RUNTIME_0068 testbench.sv (22): $finish called.
