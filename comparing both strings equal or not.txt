@@ -1,0 +1,68 @@
+module comparing_the_both_strings_same_or_not(clk,reset,sr_1,sr_2,out);
+  input clk,reset;
+  input string sr_1;
+  input string sr_2;
+  output reg out;
+  
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset)
+      out <= 0;
+    else
+      begin
+        if( sr_1 == sr_2 )
+          out <= 1;
+        else
+          out <= 0;
+      end
+  end
+endmodule
+
+tb:
+module tb;
+  reg clk,reset;
+  string sr_1;
+  string sr_2;
+  wire out;
+  
+  
+  comparing_the_both_strings_same_or_not u1(.out(out),.sr_2(sr_2),.sr_1(sr_1),.reset(reset),.clk(clk));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  
+  initial
+    begin
+      reset=0;
+      #5;
+      reset=1;
+      sr_1="chandu";
+      sr_2="chandu";
+      #10;
+      sr_1="chandu";
+      sr_2="vinay";
+      #15;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,sr_1=%0s,sr_2=%0s,out=%0b",$time,clk,reset,sr_1,sr_2,out);
+    end
+endmodule
+  
+  
+output:
+KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: time=0,clk=0,reset=0,sr_1=,sr_2=,out=0
+# KERNEL: time=5,clk=1,reset=1,sr_1=chandu,sr_2=chandu,out=1
+# KERNEL: time=10,clk=0,reset=1,sr_1=chandu,sr_2=chandu,out=1
+# KERNEL: time=15,clk=1,reset=1,sr_1=chandu,sr_2=vinay,out=0
+# KERNEL: time=20,clk=0,reset=1,sr_1=chandu,sr_2=vinay,out=0
+# KERNEL: time=25,clk=1,reset=1,sr_1=chandu,sr_2=vinay,out=0
+# RUNTIME: Info: RUNTIME_0068 testbench.sv (28): $finish called.
