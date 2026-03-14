@@ -1,0 +1,88 @@
+FINDING DUPLICATES IN A ARRAY:
+
+module finding_duplicates_in_a_array(clk,reset,arr,duplication);
+  input clk,reset;
+  input [7:0]arr[0:4];
+  output reg [7:0]duplication[0:4];
+  
+  bit found;
+  
+  int i;
+  int j;
+  int k;
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset) begin
+      duplication <= '{0,0,0,0,0};
+      i <= 0;
+      found = 0;
+    end
+    else
+      begin
+        if(i<$size(arr))
+          for(j=$size(arr)-1; j>i; j--) begin
+          if(arr[j] == arr[i]) begin
+            found = 0;
+            for(k=0; k<$size(duplication); k++) begin
+              if(duplication[k] == arr[j])
+                found = 1;
+            end
+            if(!found)
+              duplication[i] <= arr[j];
+          end
+        end
+        i<= i+1;
+      end
+  end
+endmodule
+
+tb:
+module tb;
+  reg clk,reset;
+  reg [7:0]arr[0:4];
+  wire [7:0]duplication[0:4];
+  
+  
+  
+  
+  finding_duplicates_in_a_array u1(.duplication(duplication),.arr(arr),.reset(reset),.clk(clk));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset=0;
+      #5;
+      reset=1;
+      arr = {10,20,20,10,10};
+      #50;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,arr=%0p,duplication=%0p",$time,clk,reset,arr,duplication);
+    end
+endmodule
+      
+  
+  
+output:
+# Allocation: Simulator allocated 5373 kB (elbread=427 elab2=4939 kernel=6 sdf=0)
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: time=0,clk=0,reset=0,arr=x x x x x,duplication=0 0 0 0 0
+# KERNEL: time=5,clk=1,reset=1,arr=10 20 20 10 10,duplication=10 0 0 0 0
+# KERNEL: time=10,clk=0,reset=1,arr=10 20 20 10 10,duplication=10 0 0 0 0
+# KERNEL: time=15,clk=1,reset=1,arr=10 20 20 10 10,duplication=10 20 0 0 0
+# KERNEL: time=20,clk=0,reset=1,arr=10 20 20 10 10,duplication=10 20 0 0 0
+# KERNEL: time=25,clk=1,reset=1,arr=10 20 20 10 10,duplication=10 20 0 0 0
+# KERNEL: time=30,clk=0,reset=1,arr=10 20 20 10 10,duplication=10 20 0 0 0
+# KERNEL: time=35,clk=1,reset=1,arr=10 20 20 10 10,duplication=10 20 0 0 0
+# KERNEL: time=40,clk=0,reset=1,arr=10 20 20 10 10,duplication=10 20 0 0 0
+# KERNEL: time=45,clk=1,reset=1,arr=10 20 20 10 10,duplication=10 20 0 0 0
+# KERNEL: time=50,clk=0,reset=1,arr=10 20 20 10 10,duplication=10 20 0 0 0
