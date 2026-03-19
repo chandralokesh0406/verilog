@@ -1,0 +1,74 @@
+REVERSE OF A DIGIT
+
+module reverse_of_a_digit(clk,reset,num,out);
+  input clk,reset;
+  input [7:0]num;
+  output reg [7:0]out;
+  
+  reg [7:0]reverse,digit_1;
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset) begin
+      out <= 0;
+      reverse <= 0;
+      digit_1 <= num;
+    end
+    else
+      begin
+        if( digit_1 > 0) begin
+          reverse <= reverse * 10 + (digit_1 % 10);
+          digit_1 <= digit_1 / 10;
+        end
+        else
+          begin
+            out <= reverse;
+          end
+      end
+  end
+endmodule
+          
+
+tb:
+module tb;
+  reg clk,reset;
+  reg [7:0]num;
+  wire [7:0]out;
+  
+  
+  reverse_of_a_digit u1(.out(out),.num(num),.reset(reset),.clk(clk));
+  
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset=0;
+      num=122;
+      #5;
+      reset=1;
+      #40;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,num=%0d,out=%0d",$time,clk,reset,num,out);
+    end
+endmodule
+
+output:
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: time=0,clk=0,reset=0,num=122,out=0
+# KERNEL: time=5,clk=1,reset=1,num=122,out=0
+# KERNEL: time=10,clk=0,reset=1,num=122,out=0
+# KERNEL: time=15,clk=1,reset=1,num=122,out=0
+# KERNEL: time=20,clk=0,reset=1,num=122,out=0
+# KERNEL: time=25,clk=1,reset=1,num=122,out=0
+# KERNEL: time=30,clk=0,reset=1,num=122,out=0
+# KERNEL: time=35,clk=1,reset=1,num=122,out=221
+# KERNEL: time=40,clk=0,reset=1,num=122,out=221
+# RUNTIME: Info: RUNTIME_0068 testbench.sv (23): $finish called.
