@@ -1,0 +1,84 @@
+PROBLEM STATMENT:
+
+🧾 20. Find Missing Digit in Sequence
+🔹 Objective
+
+Find missing number in sequence
+
+🔍 Example
+
+1,2,3,5
+
+🎯 Output
+
+👉 4
+
+
+design:
+
+module finding_missing_digit_in_a_sequence(clk,reset,num,out);
+  input clk,reset;
+  input [3:0]num[0:3];
+  output reg [3:0]out;
+  
+  int i;
+  reg [3:0]count;
+  
+  always @(posedge clk or negedge reset)
+    begin
+      if(!reset) begin
+        out <= 0;
+        i  <= 0;
+        count <= 1;
+      end
+      else
+        begin
+          for( i=0; i<$size(num); i++) begin
+            if(count != num[i])
+              out = count;
+            else if(out != count)
+            count = count + 1;
+          end
+        end
+    end
+endmodule
+
+tb:
+module tb;
+  reg clk,reset;
+  reg [3:0]num[0:3];
+  wire [3:0]out;
+  
+  finding_missing_digit_in_a_sequence u1(.out(out),.num(num),.reset(reset),.clk(clk));
+  
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset=0;
+      num = {1,2,3,5};
+      #5;
+      reset=1;
+      #15;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,num=%0p,out=%0d",$time,clk,reset,num,out);
+    end
+endmodule
+      
+
+output:
+ KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: time=0,clk=0,reset=0,num=1 2 3 5,out=0
+# KERNEL: time=5,clk=1,reset=1,num=1 2 3 5,out=4
+# KERNEL: time=10,clk=0,reset=1,num=1 2 3 5,out=4
+# KERNEL: time=15,clk=1,reset=1,num=1 2 3 5,out=4
+# RUNTIME: Info: RUNTIME_0068 testbench.sv (22): $finish called.
