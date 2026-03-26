@@ -1,0 +1,55 @@
+GENERATING OF MATRIX:
+
+module matrix(
+    input clk,
+    input reset,
+    output reg [7:0] mat [0:1][0:1]
+);
+
+always @(posedge clk or negedge reset) begin
+    if(!reset) begin
+        mat[0][0] <= 0;
+        mat[0][1] <= 0;
+        mat[1][0] <= 0;
+        mat[1][1] <= 0;
+    end
+    else begin
+        mat[0][0] <= 8'd1;
+        mat[0][1] <= 8'd2;
+        mat[1][0] <= 8'd3;
+        mat[1][1] <= 8'd4;
+    end
+end
+
+endmodule
+
+tb:
+module tb;
+  reg clk, reset;
+  wire [7:0] mat [0:1][0:1];
+  
+  matrix uut (.clk(clk),.reset(reset),.mat(mat));
+  
+  initial begin
+    clk = 0;
+    forever #5 clk = ~clk;
+  end
+  
+  initial begin
+    reset = 0;
+    #10;
+    reset = 1;
+    #20;
+    $finish;
+  end
+  
+  initial begin
+    $monitor("time=%0t | [%0d %0d] [%0d %0d]",$time,mat[0][0], mat[0][1],mat[1][0],
+             mat[1][1]);
+  end
+endmodule
+
+output:
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: time=0 | [0 0] [0 0]
+# KERNEL: time=15 | [1 2] [3 4]
