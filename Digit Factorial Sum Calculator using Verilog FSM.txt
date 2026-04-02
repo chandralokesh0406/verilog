@@ -1,0 +1,186 @@
+design:
+
+module digit_extraction_factorial(clk,reset,num,out);
+  input clk,reset;
+  input [15:0]num;
+  output reg [15:0]out;
+  
+  
+  reg[2:0]current_state,next_state;
+  
+  reg [15:0]digit,digit_1,digit_2,digit_3;
+  
+  parameter s0 = 3'b000;
+  parameter s1 = 3'b001;
+  parameter s2 = 3'b010;
+  parameter s3 = 3'b011;
+  parameter s4 = 3'b100;
+  
+  
+  always @(*) begin
+    next_state = current_state;
+    case(current_state)
+        s0:
+        begin
+          next_state = s1;
+        end
+        s1:
+        begin
+          if( digit_1 > 0)
+            next_state = s2;
+          else
+            next_state = s0;
+        end
+        s2:
+          begin
+            next_state = s3;
+          end
+        s3:
+          begin
+            if(digit_3 > 0)
+              next_state = s3;
+            else
+              next_state = s4;
+          end
+        s4:
+          begin
+            next_state = s1;
+          end
+    endcase
+  end
+
+            
+      
+      
+          
+  
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset) begin
+      current_state <= s0;
+      out <= 0;
+      digit <= num;
+      digit_1 <= 0;
+      digit_2 <= 1;
+      digit_3 <= 0;
+    end
+    else begin
+      current_state <= next_state;
+      case(current_state)
+          s0:
+          begin
+            digit <= 0;
+            digit_1 <= num;
+            digit_2 <= 1;
+            digit_3 <= 0;
+            out <= 0;
+          end
+          s1:
+          begin
+            if(digit_1 > 0) begin
+              digit <= digit_1 % 10;
+              digit_1 <= digit_1 / 10;
+            end
+          end
+          s2:
+          begin
+            digit_3 <= digit-1;
+            digit_2 <= digit;
+          end
+          s3:
+          begin
+            if(digit_3 > 0) begin
+              digit_3 <= digit_3-1;
+              digit_2 <= digit_2 * digit_3;
+            end
+          end
+          s4:
+            begin
+              out <= out + digit_2;
+            end
+      endcase
+    end
+  end
+endmodule
+              
+tb:
+module tb;
+  reg clk,reset;
+  reg [15:0]num;
+  wire [15:0]out;
+  
+  
+  digit_extraction_factorial u1(.out(out),.num(num),.reset(reset),.clk(clk));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0;
+      num = 245;
+      #5;
+      reset = 1;
+      #300;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,num=%0d,out=%0d",$time,clk,reset,num,out);
+    end
+endmodule
+
+output:
+# KERNEL: time=0,clk=0,reset=0,num=245,out=0
+# KERNEL: time=5,clk=1,reset=1,num=245,out=0
+# KERNEL: time=10,clk=0,reset=1,num=245,out=0
+# KERNEL: time=15,clk=1,reset=1,num=245,out=0
+# KERNEL: time=20,clk=0,reset=1,num=245,out=0
+# KERNEL: time=25,clk=1,reset=1,num=245,out=0
+# KERNEL: time=30,clk=0,reset=1,num=245,out=0
+# KERNEL: time=35,clk=1,reset=1,num=245,out=0
+# KERNEL: time=40,clk=0,reset=1,num=245,out=0
+# KERNEL: time=45,clk=1,reset=1,num=245,out=0
+# KERNEL: time=50,clk=0,reset=1,num=245,out=0
+# KERNEL: time=55,clk=1,reset=1,num=245,out=0
+# KERNEL: time=60,clk=0,reset=1,num=245,out=0
+# KERNEL: time=65,clk=1,reset=1,num=245,out=0
+# KERNEL: time=70,clk=0,reset=1,num=245,out=0
+# KERNEL: time=75,clk=1,reset=1,num=245,out=0
+# KERNEL: time=80,clk=0,reset=1,num=245,out=0
+# KERNEL: time=85,clk=1,reset=1,num=245,out=120
+# KERNEL: time=90,clk=0,reset=1,num=245,out=120
+# KERNEL: time=95,clk=1,reset=1,num=245,out=120
+# KERNEL: time=100,clk=0,reset=1,num=245,out=120
+# KERNEL: time=105,clk=1,reset=1,num=245,out=120
+# KERNEL: time=110,clk=0,reset=1,num=245,out=120
+# KERNEL: time=115,clk=1,reset=1,num=245,out=120
+# KERNEL: time=120,clk=0,reset=1,num=245,out=120
+# KERNEL: time=125,clk=1,reset=1,num=245,out=120
+# KERNEL: time=130,clk=0,reset=1,num=245,out=120
+# KERNEL: time=135,clk=1,reset=1,num=245,out=120
+# KERNEL: time=140,clk=0,reset=1,num=245,out=120
+# KERNEL: time=145,clk=1,reset=1,num=245,out=120
+# KERNEL: time=150,clk=0,reset=1,num=245,out=120
+# KERNEL: time=155,clk=1,reset=1,num=245,out=144
+# KERNEL: time=160,clk=0,reset=1,num=245,out=144
+# KERNEL: time=165,clk=1,reset=1,num=245,out=144
+# KERNEL: time=170,clk=0,reset=1,num=245,out=144
+# KERNEL: time=175,clk=1,reset=1,num=245,out=144
+# KERNEL: time=180,clk=0,reset=1,num=245,out=144
+# KERNEL: time=185,clk=1,reset=1,num=245,out=144
+# KERNEL: time=190,clk=0,reset=1,num=245,out=144
+# KERNEL: time=195,clk=1,reset=1,num=245,out=144
+# KERNEL: time=200,clk=0,reset=1,num=245,out=144
+# KERNEL: time=205,clk=1,reset=1,num=245,out=146
+# KERNEL: time=210,clk=0,reset=1,num=245,out=146
+# KERNEL: time=215,clk=1,reset=1,num=245,out=146
+# KERNEL: time=220,clk=0,reset=1,num=245,out=146
+# KERNEL: time=225,clk=1,reset=1,num=245,out=0
+# KERNEL: time=230,clk=0,reset=1,num=245,out=0
+# KERNEL: time=235,clk=1,reset=1,num=245,out=0
