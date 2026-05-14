@@ -1,0 +1,64 @@
+module fliping_of_bits(clk,reset,bits,out);
+  input clk,reset;
+  input [3:0]bits;
+  output reg [3:0]out;
+  
+  reg [2:0]i;
+  parameter size = 4;
+  
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset)
+      out <= 4'b0000;
+    else
+      for(i=0; i<size; i++) begin
+        if(i % 2 == 0)
+          out[i] <= ~bits[i];
+        else
+          out[i] <= bits[i];
+      end
+  end
+endmodule
+
+tb:
+module tb;
+  reg clk,reset;
+  reg [3:0]bits;
+  wire [3:0]out;
+  
+  fliping_of_bits u1(.clk(clk),.reset(reset),.bits(bits),.out(out));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0;
+      #5;
+      reset = 1;
+      bits = 4'b1010;
+      #20;
+      $finish;
+    end
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,bits=%04b,out=%04b",$time,clk,reset,bits,out);
+    end
+endmodule
+
+output:
+# KERNEL: Kernel process initialization done.
+# Allocation: Simulator allocated 4540 kB (elbread=427 elab2=4106 kernel=6 sdf=0)
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: time=0,clk=0,reset=0,bits=xxxx,out=0000
+# KERNEL: time=5,clk=1,reset=1,bits=1010,out=1111
+# KERNEL: time=10,clk=0,reset=1,bits=1010,out=1111
+# KERNEL: time=15,clk=1,reset=1,bits=1010,out=1111
+# KERNEL: time=20,clk=0,reset=1,bits=1010,out=1111
+# RUNTIME: Info: RUNTIME_0068 testbench.sv (21): $finish called.
+# KERNEL: Time: 25 ns,  Iteration: 0,  Instance: /tb,  Process: @INITIAL#14_1@.
+# KERNEL: stopped at time: 25 ns
