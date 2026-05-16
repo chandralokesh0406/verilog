@@ -1,0 +1,82 @@
+SQUARE WAVE PATTERN
+
+module square_star_pattern (
+    input clk,
+    input reset
+);
+
+    reg [1:0] row;
+    reg [1:0] col;
+
+    parameter SIZE = 4;
+
+    always @(posedge clk or negedge reset) begin
+
+        if(!reset) begin
+            row <= 0;
+            col <= 0;
+        end
+
+        else begin
+
+            if(row < SIZE) begin
+
+                if(col < SIZE-1) begin
+                  $write(" * ");
+                    col <= col + 1;
+                end
+
+                else begin
+                  $write(" * ");
+                    $display("");
+                    col <= 0;
+                    row <= row + 1;
+                end
+
+            end
+
+        end
+
+    end
+
+endmodule
+
+
+module tb;
+
+    reg clk;
+    reg reset;
+
+    square_star_pattern u1 (
+        .clk(clk),
+        .reset(reset)
+    );
+
+ 
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk;
+    end
+
+ 
+    initial begin
+        reset = 0;
+
+        #10;
+        reset = 1;
+
+        #200;
+        $finish;
+    end
+
+endmodule
+
+output:
+
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL:  *  *  *  * 
+# KERNEL:  *  *  *  * 
+# KERNEL:  *  *  *  * 
+# KERNEL:  *  *  *  * 
+# KERNEL:  *  *  *  * 
+# RUNTIME: Info: RUNTIME_0068 testbench.sv (25): $finish called.
