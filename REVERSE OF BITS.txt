@@ -1,0 +1,57 @@
+REVERSE OF BITS:
+
+module reverse_of_bits(clk,reset,in,out);
+  input clk,reset;
+  input [3:0]in;
+  output reg [3:0]out;
+  
+  reg [1:0]i,k;
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset) begin
+      out <= 0;
+      i <= 0;
+      k <= 0;
+    end
+    else
+      begin
+        for(i=0; i<4; i++) begin
+          out[i] <= in[3-i];
+        end
+      end
+  end
+endmodule
+
+
+tb:
+
+module tb;
+  reg clk,reset;
+  reg [3:0]in;
+  wire [3:0]out;
+  
+  reverse_of_bits u1(.out(out),.in(in),.reset(reset),.clk(clk));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0;
+      #5;
+      reset = 1;
+      #5;
+      in = 4'b1011;
+      #20;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,in=%04b,out=%04b",$time,clk,reset,in,out);
+    end
+endmodule
