@@ -1,0 +1,65 @@
+REVERSE A ARRAY:
+
+module reverse_a_array(clk,reset,in,out);
+  input clk,reset;
+  input [7:0]in[0:4];
+  output reg [7:0]out[0:4];
+  
+  reg [7:0]i;
+  
+  parameter size = 5;
+
+  always  @(posedge clk or negedge reset) begin
+    if(!reset) begin
+      out <= {0,0,0,0,0};
+      i <= 0;
+    end
+    else
+      begin
+        for(i=0; i<size; i++) begin
+          out[i] = in[size-i-1];
+        end
+      end
+  end
+endmodule
+    
+TB:
+module tb;
+  reg clk,reset;
+  reg [7:0]in[0:4];
+  wire [7:0]out[0:4];
+  
+  reverse_a_array u1(.out(out),.in(in),.reset(reset),.clk(clk));
+  
+  initial
+    begin
+      clk =0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0;
+      #5;
+      reset = 1; 
+      in = {10,20,30,40,50};
+      #5;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,in=%0p,out=%0p",$time,clk,reset,in,out);
+    end
+endmodule
+  
+
+OUTPUT:
+# Allocation: Simulator allocated 5374 kB (elbread=427 elab2=4940 kernel=7 sdf=0)
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: time=0,clk=0,reset=0,in=x x x x x,out=0 0 0 0 0
+# KERNEL: time=5,clk=1,reset=1,in=10 20 30 40 50,out=50 40 30 20 10
+# RUNTIME: Info: RUNTIME_0068 testbench.sv (21): $finish called.
+# KERNEL: Time: 10 ns,  Iteration: 0,  Instance: /tb,  Process: @INITIAL#14_1@.
+# KERNEL: stopped at time: 10 ns
+# VSIM: Simulation has finished. There are no more test vectors to simulate.
