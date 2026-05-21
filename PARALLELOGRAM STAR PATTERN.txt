@@ -1,0 +1,130 @@
+PARALLELOGRAM STAR PATTERN:
+
+module parallelogram_star_printing(clk,reset);
+  input clk,reset;
+  
+  
+  parameter s0 = 2'b00;
+  parameter s1 = 2'b01;
+  parameter s2 = 2'b10;
+  parameter s3 = 2'b11;
+  
+  parameter size = 5;
+  
+  reg [1:0]current_state,next_state;
+  
+  reg [2:0]row,col,space;
+  
+  always @(*) begin
+    next_state = current_state;
+    case(current_state)
+      s0:
+        begin
+          next_state = s1;
+        end
+      s1:
+        begin
+          if(space < row)
+            next_state = s1;
+          else
+            next_state = s2;
+        end
+      s2:
+        begin
+          if(col < size)
+            next_state = s2;
+          else
+            next_state = s3;
+        end
+      s3:
+        begin
+          next_state = s1;
+        end
+    endcase
+  end
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset) begin
+      row <= 0;
+      col <= 0;
+      space <= 0;
+      current_state <= s0;
+    end
+    else
+      begin
+        current_state <= next_state;
+        case(current_state)
+          s0:
+            begin
+              col <= 0;
+              space <= 0;
+            end
+          s1:
+            begin
+              if(space < row)
+                begin
+                  $write(" ");
+                  space <= space + 1;
+                end
+            end
+          s2:
+            begin
+              if(col < size)begin
+                $write("*");
+                col <= col+1;
+              end
+            end
+          s3:
+            begin
+              $display("");
+              row <= row + 1;
+              col <= 0;
+              space <= 0;
+              
+              if(row == size - 1)
+                $finish;
+            end
+        endcase
+      end
+  end
+endmodule
+      
+
+output:
+module tb;
+
+  reg clk;
+  reg reset;
+
+ 
+  parallelogram_star_printing u1(.clk(clk),.reset(reset));
+
+ 
+  initial begin
+    clk = 0;
+    forever #5 clk = ~clk;
+  end
+
+ 
+  initial begin
+    reset = 0;
+
+    #10;
+    reset = 1;
+  end
+
+endmodule
+
+output:
+# KERNEL: Kernel process initialization done.
+# Allocation: Simulator allocated 4549 kB (elbread=427 elab2=4115 kernel=7 sdf=0)
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: *****
+# KERNEL:  *****
+# KERNEL:   *****
+# KERNEL:    *****
+# KERNEL:     *****
+# RUNTIME: Info: RUNTIME_0068 design.sv (84): $finish called.
+# KERNEL: Time: 515 ns,  Iteration: 1,  Instance: /tb/u1,  Process: @ALWAYS#45_1@.
+# KERNEL: stopped at time: 515 ns
