@@ -1,0 +1,144 @@
+TRAPEZODIAL PATTERN:
+
+module trapezodial_pattern(clk,reset);
+  input clk,reset;
+  
+  parameter size = 5;
+  reg [3:0]size_1;
+  
+  parameter s0 = 3'b000;
+  parameter s1 = 3'b001;
+  parameter s2 = 3'b010;
+  parameter s3 = 3'b011;
+  parameter s4 = 3'b100;
+  
+  reg [5:0]row,col,space;
+  
+  reg [2:0]current_state,next_state;
+  
+  always @(*) begin
+    next_state = current_state;
+    case(current_state)
+      s0:
+        begin
+          next_state = s1;
+        end
+      s1:
+        begin
+          if(space < size-row-1)
+            next_state = s1;
+          else
+            next_state = s2;
+        end
+      s2:
+        begin
+          if(col < size_1)
+            next_state = s2;
+          else
+            next_state = s3;
+        end
+      s3:
+        begin
+          next_state = s4;
+        end
+      s4:
+        begin
+          if(row < size)
+            next_state = s1;
+          else
+            next_state = s4;
+        end
+    endcase
+  end
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset) begin
+      row <= 0;
+      col <= 0;
+      space <= 0;
+      current_state <= s0;
+      size_1 <= 4;
+    end
+    else
+      begin
+        current_state <= next_state;
+        case(current_state)
+          s0:
+            begin
+              col <= 0;
+              space <= 0;
+            end
+          s1:
+            begin
+              if(row < size)
+                begin
+                  if(space < size-row-1) begin
+                    $write(" ");
+                    space <= space + 1;
+                  end
+                end
+            end
+          s2:
+            begin
+              if(col < size_1) begin
+                $write("*");
+                col <= col + 1;
+              end
+            end
+          s3:
+            begin
+              $display("");
+              col <= 0;
+              row <= row + 1;
+              size_1 <= size_1 + 2;
+              space <= 0;
+            end
+          s4:
+            begin
+              if ( row >= size)
+                $finish;
+            end
+        endcase
+      end
+  end
+endmodule
+
+testbench:
+
+module tb;
+  reg clk,reset;
+  
+  
+  
+  trapezodial_pattern u1(.reset(reset),.clk(clk));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0;
+      #5;
+      reset = 1;
+    end
+  
+endmodule
+
+output:
+# KERNEL: Kernel process initialization done.
+# Allocation: Simulator allocated 4552 kB (elbread=427 elab2=4117 kernel=7 sdf=0)
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL:     ****
+# KERNEL:    ******
+# KERNEL:   ********
+# KERNEL:  **********
+# KERNEL: ************
+# RUNTIME: Info: RUNTIME_0068 design.sv (98): $finish called.
+# KERNEL: Time: 705 ns,  Iteration: 1,  Instance: /tb/u1,  Process: @ALWAYS#53_1@.
+# KERNEL: stopped at time: 705 ns
+# VSIM: Simulation has finished. There are no more test vectors to simulate.
+# VSIM: Simulation has finished.
