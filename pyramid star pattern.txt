@@ -1,0 +1,131 @@
+pyramid star pattern:
+
+module pyramid_star_pattern(clk,reset);
+  input clk,reset;
+  
+  parameter s0 = 2'b00;
+  parameter s1 = 2'b01;
+  parameter s2 = 2'b10;
+  parameter s3 = 2'b11;
+  
+  parameter size = 5;
+  reg[1:0]current_state,next_state;
+  
+  reg [2:0]row,space;
+  reg [3:0]col,size_1;
+  
+  always @(*) begin
+    next_state = current_state;
+    case(current_state)
+      s0:
+        begin
+          next_state = s1;
+        end
+      s1:
+        begin
+          if(row < size) begin
+            if(space < size - row - 1)
+              next_state = s1;
+            else
+              next_state = s2;
+          end
+        end
+      s2:
+        begin
+          if(col < size_1)
+            next_state = s2;
+          else
+            next_state = s3;
+        end
+      s3:
+        begin
+          next_state = s1;
+        end
+    endcase
+  end
+         
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset)
+      begin
+        row <= 0;
+        space <= 0;
+        col <= 0;
+        size_1 <= 1;
+        current_state <= s0;
+      end
+    else
+      begin
+        current_state <= next_state;
+        case(current_state)
+          s0:
+            begin
+              col <= 0;
+              space <= 0;
+            end
+          s1:
+            begin
+              if(row >=  size)
+                  $finish;
+              else if(space < size - row - 1) begin
+                $write(" ");
+                space <= space + 1;
+              end
+            end
+          s2:
+            begin
+              if(col < size_1) begin
+                $write("*");
+                col <= col + 1;
+              end
+            end
+          s3:
+            begin
+              $display("");
+              col <= 0;
+              space <= 0;
+              row <= row + 1;
+              size_1 <= size_1 + 2;
+            end
+        endcase
+      end
+  end
+endmodule
+
+testbench:
+module tb;
+  reg clk,reset;
+  
+  pyramid_star_pattern u1(.clk(clk),.reset(reset));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0;
+      #5;
+      reset = 1;
+    end
+endmodule
+
+output:
+# KERNEL: SLP simulation initialization done - time: 0.0 [s].
+# KERNEL: Kernel process initialization done.
+# Allocation: Simulator allocated 4552 kB (elbread=427 elab2=4117 kernel=7 sdf=0)
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL:     *
+# KERNEL:    ***
+# KERNEL:   *****
+# KERNEL:  *******
+# KERNEL: *********
+# RUNTIME: Info: RUNTIME_0068 design.sv (98): $finish called.
+# KERNEL: Time: 555 ns,  Iteration: 1,  Instance: /tb/u1,  Process: @ALWAYS#52_1@.
+# KERNEL: stopped at time: 555 ns
+# VSIM: Simulation has finished. There are no more test vectors to simulate.
+# VSIM: Simulation has finished.
+Done
