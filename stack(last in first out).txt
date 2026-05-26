@@ -1,0 +1,167 @@
+module stack(clk,reset,wr_en,rd_en,data_in,data_out);
+  input clk,reset;
+  input wr_en;
+  input rd_en;
+  input [7:0]data_in;
+  output reg [7:0]data_out;
+  
+  reg full,empty;
+  reg [7:0]stack[0:15];
+  
+  reg [4:0]sp;
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset) begin
+      data_out <= 0;
+      full <= 0;
+      empty <= 1;
+      sp <= 0;
+    end
+    else
+      begin
+        if(wr_en == 1 && full !=1) begin
+          stack[sp] <= data_in;
+          sp <= sp + 1;
+          empty <= 0;
+          if(sp+1 == 16)
+            full <= 1;
+        end
+        else if(rd_en == 1 && empty == 0)
+          begin
+            data_out <= stack[sp-1];
+            sp <= sp - 1;
+            full <= 0;
+            if(sp == 1)
+              empty <= 1;
+          end
+      end
+  end
+endmodule
+    
+
+tb:
+module tb;
+  reg clk,reset;
+  reg wr_en;
+  reg rd_en;
+  reg [7:0]data_in;
+  wire [7:0]data_out;
+  
+  stack u1(.data_out(data_out),.data_in(data_in),.rd_en(rd_en),.wr_en(wr_en),.clk(clk),.reset(reset));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0;
+      #5;
+      reset = 1;
+      wr_en = 1;
+      rd_en = 0;
+      data_in = 22; #10;
+      data_in = 27; #10;
+      data_in = 33; #10;
+      data_in = 44; #10;
+      data_in = 55; #10;
+      data_in = 66; #10;
+      data_in = 77; #10;
+      data_in = 88; #10;
+      data_in = 99; #10;
+      data_in = 100; #10;
+      data_in = 11; #10;
+      data_in = 15; #10;
+      data_in = 32; #10;
+      data_in = 9; #10;
+      data_in = 10; #10;
+      data_in = 79; #10;
+      wr_en = 0;
+      rd_en = 1;
+      #160;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,wr_en=%0b,rd_en=%0b,data_in=%0d,data_out=%0d",$time,clk,reset,wr_en,rd_en,data_in,data_out);
+    end
+endmodule
+
+output:
+# KERNEL: Kernel process initialization done.
+# Allocation: Simulator allocated 4543 kB (elbread=427 elab2=4110 kernel=6 sdf=0)
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: time=0,clk=0,reset=0,wr_en=x,rd_en=x,data_in=x,data_out=0
+# KERNEL: time=5,clk=1,reset=1,wr_en=1,rd_en=0,data_in=22,data_out=0
+# KERNEL: time=10,clk=0,reset=1,wr_en=1,rd_en=0,data_in=22,data_out=0
+# KERNEL: time=15,clk=1,reset=1,wr_en=1,rd_en=0,data_in=27,data_out=0
+# KERNEL: time=20,clk=0,reset=1,wr_en=1,rd_en=0,data_in=27,data_out=0
+# KERNEL: time=25,clk=1,reset=1,wr_en=1,rd_en=0,data_in=33,data_out=0
+# KERNEL: time=30,clk=0,reset=1,wr_en=1,rd_en=0,data_in=33,data_out=0
+# KERNEL: time=35,clk=1,reset=1,wr_en=1,rd_en=0,data_in=44,data_out=0
+# KERNEL: time=40,clk=0,reset=1,wr_en=1,rd_en=0,data_in=44,data_out=0
+# KERNEL: time=45,clk=1,reset=1,wr_en=1,rd_en=0,data_in=55,data_out=0
+# KERNEL: time=50,clk=0,reset=1,wr_en=1,rd_en=0,data_in=55,data_out=0
+# KERNEL: time=55,clk=1,reset=1,wr_en=1,rd_en=0,data_in=66,data_out=0
+# KERNEL: time=60,clk=0,reset=1,wr_en=1,rd_en=0,data_in=66,data_out=0
+# KERNEL: time=65,clk=1,reset=1,wr_en=1,rd_en=0,data_in=77,data_out=0
+# KERNEL: time=70,clk=0,reset=1,wr_en=1,rd_en=0,data_in=77,data_out=0
+# KERNEL: time=75,clk=1,reset=1,wr_en=1,rd_en=0,data_in=88,data_out=0
+# KERNEL: time=80,clk=0,reset=1,wr_en=1,rd_en=0,data_in=88,data_out=0
+# KERNEL: time=85,clk=1,reset=1,wr_en=1,rd_en=0,data_in=99,data_out=0
+# KERNEL: time=90,clk=0,reset=1,wr_en=1,rd_en=0,data_in=99,data_out=0
+# KERNEL: time=95,clk=1,reset=1,wr_en=1,rd_en=0,data_in=100,data_out=0
+# KERNEL: time=100,clk=0,reset=1,wr_en=1,rd_en=0,data_in=100,data_out=0
+# KERNEL: time=105,clk=1,reset=1,wr_en=1,rd_en=0,data_in=11,data_out=0
+# KERNEL: time=110,clk=0,reset=1,wr_en=1,rd_en=0,data_in=11,data_out=0
+# KERNEL: time=115,clk=1,reset=1,wr_en=1,rd_en=0,data_in=15,data_out=0
+# KERNEL: time=120,clk=0,reset=1,wr_en=1,rd_en=0,data_in=15,data_out=0
+# KERNEL: time=125,clk=1,reset=1,wr_en=1,rd_en=0,data_in=32,data_out=0
+# KERNEL: time=130,clk=0,reset=1,wr_en=1,rd_en=0,data_in=32,data_out=0
+# KERNEL: time=135,clk=1,reset=1,wr_en=1,rd_en=0,data_in=9,data_out=0
+# KERNEL: time=140,clk=0,reset=1,wr_en=1,rd_en=0,data_in=9,data_out=0
+# KERNEL: time=145,clk=1,reset=1,wr_en=1,rd_en=0,data_in=10,data_out=0
+# KERNEL: time=150,clk=0,reset=1,wr_en=1,rd_en=0,data_in=10,data_out=0
+# KERNEL: time=155,clk=1,reset=1,wr_en=1,rd_en=0,data_in=79,data_out=0
+# KERNEL: time=160,clk=0,reset=1,wr_en=1,rd_en=0,data_in=79,data_out=0
+# KERNEL: time=165,clk=1,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=79
+# KERNEL: time=170,clk=0,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=79
+# KERNEL: time=175,clk=1,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=10
+# KERNEL: time=180,clk=0,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=10
+# KERNEL: time=185,clk=1,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=9
+# KERNEL: time=190,clk=0,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=9
+# KERNEL: time=195,clk=1,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=32
+# KERNEL: time=200,clk=0,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=32
+# KERNEL: time=205,clk=1,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=15
+# KERNEL: time=210,clk=0,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=15
+# KERNEL: time=215,clk=1,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=11
+# KERNEL: time=220,clk=0,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=11
+# KERNEL: time=225,clk=1,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=100
+# KERNEL: time=230,clk=0,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=100
+# KERNEL: time=235,clk=1,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=99
+# KERNEL: time=240,clk=0,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=99
+# KERNEL: time=245,clk=1,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=88
+# KERNEL: time=250,clk=0,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=88
+# KERNEL: time=255,clk=1,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=77
+# KERNEL: time=260,clk=0,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=77
+# KERNEL: time=265,clk=1,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=66
+# KERNEL: time=270,clk=0,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=66
+# KERNEL: time=275,clk=1,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=55
+# KERNEL: time=280,clk=0,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=55
+# KERNEL: time=285,clk=1,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=44
+# KERNEL: time=290,clk=0,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=44
+# KERNEL: time=295,clk=1,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=33
+# KERNEL: time=300,clk=0,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=33
+# KERNEL: time=305,clk=1,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=27
+# KERNEL: time=310,clk=0,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=27
+# KERNEL: time=315,clk=1,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=22
+# KERNEL: time=320,clk=0,reset=1,wr_en=0,rd_en=1,data_in=79,data_out=22
+# RUNTIME: Info: RUNTIME_0068 testbench.sv (42): $finish called.
+# KERNEL: Time: 325 ns,  Iteration: 0,  Instance: /tb,  Process: @INITIAL#16_1@.
+# KERNEL: stopped at time: 325 ns
+# VSIM: Simulation has finished. There are no more test vectors to simulate.
+# VSIM: Simulation has finished.
