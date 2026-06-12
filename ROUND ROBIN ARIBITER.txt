@@ -1,0 +1,127 @@
+ROUND ROBIN ARIBITER:
+
+module round_robin_aribiter(clk,reset,m,grant);
+  input clk,reset;
+  input [3:0]m;
+  output reg [3:0]grant;
+  
+  reg [1:0]ptr;
+  
+  
+  always @(*) begin
+    grant = 4'b0000;
+    case(ptr)
+      2'b00:
+        begin
+          if(m[0])
+            grant = 4'b0001;
+          else if(m[1])
+            grant = 4'b0010;
+          else if(m[2])
+            grant = 4'b0100;
+          else if(m[3])
+            grant = 4'b1000;
+        end
+      2'b01:
+        begin
+          if(m[1])
+            grant = 4'b0010;
+          else if(m[2])
+            grant = 4'b0100;
+          else if(m[3])
+            grant = 4'b1000;
+          else if(m[0])
+            grant = 4'b0001;
+        end
+      2'b10:
+        begin
+          if(m[2])
+            grant = 4'b0100;
+          else if(m[3])
+            grant = 4'b1000;
+          else if(m[0])
+            grant = 4'b0001;
+          else if(m[1])
+            grant = 4'b0010;
+        end
+      2'b11:
+        begin
+          if(m[3])
+            grant = 4'b1000;
+          else if(m[0])
+            grant = 4'b0001;
+          else if(m[1])
+            grant = 4'b0010;
+          else if(m[2])
+            grant = 4'b0100;
+        end
+      default: grant = 4'b0000;
+    endcase
+  end
+  
+  
+  always @(posedge clk or negedge reset) begin
+    if(!reset)
+      ptr <= 0;
+    else
+      case(grant)
+        4'b0001: ptr <= 2'b01;
+        4'b0010: ptr <= 2'b10;
+        4'b0100: ptr <= 2'b11;
+        4'b1000: ptr <= 2'b00;
+        default: ptr <= ptr;
+      endcase
+  end
+endmodule
+
+tb:
+module tb;
+  reg clk,reset;
+  reg [3:0]m;
+  wire [3:0]grant;
+  
+  
+  round_robin_aribiter u1(.clk(clk),.reset(reset),.m(m),.grant(grant));
+  
+  initial
+    begin
+      clk = 0;
+      forever #5 clk = ~clk;
+    end
+  
+  initial
+    begin
+      reset = 0;
+      #5;
+      reset = 1;
+      m = 4'b0100;
+      #70;
+      $finish;
+    end
+  
+  initial
+    begin
+      $monitor("time=%0t,clk=%0b,reset=%0b,m=%04b,grant=%04b",$time,clk,reset,m,grant);
+    end
+endmodule
+
+output:
+# KERNEL: ASDB file was created in location /home/runner/dataset.asdb
+# KERNEL: time=0,clk=0,reset=0,m=xxxx,grant=0000
+# KERNEL: time=5,clk=1,reset=1,m=0100,grant=0100
+# KERNEL: time=10,clk=0,reset=1,m=0100,grant=0100
+# KERNEL: time=15,clk=1,reset=1,m=0100,grant=0100
+# KERNEL: time=20,clk=0,reset=1,m=0100,grant=0100
+# KERNEL: time=25,clk=1,reset=1,m=0100,grant=0100
+# KERNEL: time=30,clk=0,reset=1,m=0100,grant=0100
+# KERNEL: time=35,clk=1,reset=1,m=0100,grant=0100
+# KERNEL: time=40,clk=0,reset=1,m=0100,grant=0100
+# KERNEL: time=45,clk=1,reset=1,m=0100,grant=0100
+# KERNEL: time=50,clk=0,reset=1,m=0100,grant=0100
+# KERNEL: time=55,clk=1,reset=1,m=0100,grant=0100
+# KERNEL: time=60,clk=0,reset=1,m=0100,grant=0100
+# KERNEL: time=65,clk=1,reset=1,m=0100,grant=0100
+# KERNEL: time=70,clk=0,reset=1,m=0100,grant=0100
+# RUNTIME: Info: RUNTIME_0068 testbench.sv (22): $finish called.
+# KERNEL: Time: 75 ns,  Iteration: 0,  Instance: /tb,  Process: @INITIAL#15_1@.
+# KERNEL: stopped at time: 75 ns
