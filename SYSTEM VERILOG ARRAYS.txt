@@ -1,0 +1,154 @@
+# SystemVerilog Arrays
+
+## Definition
+
+An array is a collection of elements of the same data type, stored under a single variable name and accessed using an index.
+
+---
+
+# Classification of Arrays
+
+SystemVerilog arrays are classified based on:
+
+1. **How the memory is allocated**
+2. **When the memory is allocated**
+
+---
+
+# 1. Based on How the Memory is Allocated
+
+* **Packed Array**
+* **Unpacked Array**
+
+---
+
+# Packed Array
+
+### Definition
+
+A **packed array** stores all bits **contiguously** in a single block of memory. It is similar to vectors in Verilog and is commonly used for registers, buses, and hardware signals.
+
+### Characteristics
+
+* The packed dimension is written **before** the variable name.
+* Bits are stored in **one contiguous memory block**.
+* Only **packed data types** can be used.
+* **Integer atom types** (`byte`, `shortint`, `int`, `longint`, etc.) already have a predefined packed width, so additional packed dimensions are generally not specified.
+
+### Syntax
+
+```systemverilog
+data_type [range] variable_name;
+```
+
+### Example
+
+```systemverilog
+module top;
+
+  bit [7:0] data;
+
+  initial begin
+
+    data = 8'b10111100;
+
+    $display("data = %0d", data);
+
+  end
+
+endmodule
+```
+
+### Output
+
+```
+data = 188
+```
+
+---
+
+# Unpacked Array
+
+### Definition
+
+An **unpacked array** stores each element as a separate object in memory. It is mainly used for memories, buffers, and collections of variables.
+
+### Characteristics
+
+* The array dimension is written **after** the variable name.
+* Each element occupies its own memory location.
+* Multiple memory locations are allocated.
+* Number of memory locations equals the number of array elements.
+* Almost any SystemVerilog data type can be used, including `int`, `string`, `struct`, `class`, dynamic arrays, queues, etc.
+
+### Syntax
+
+```systemverilog
+data_type variable_name[array_size];
+```
+
+### Example
+
+```systemverilog
+module top;
+
+  int data[3:0];
+
+  initial begin
+
+    data = '{10,20,30,40};
+
+    for (int i = 0; i < $size(data); i++) begin
+      $display("data[%0d] = %0d", i, data[i]);
+    end
+
+  end
+
+endmodule
+```
+
+### Output
+
+```
+data[0] = 10
+data[1] = 20
+data[2] = 30
+data[3] = 40
+```
+
+---
+
+# Memory Representation
+
+### Packed Array
+
+```
++--------------------------------------+
+| b7 b6 b5 b4 b3 b2 b1 b0 |
++--------------------------------------+
+
+One contiguous memory block
+```
+
+### Unpacked Array
+
+```
+data
+
++---------+
+| data[0] |
++---------+
+
++---------+
+| data[1] |
++---------+
+
++---------+
+| data[2] |
++---------+
+
++---------+
+| data[3] |
++---------+
+
+Separate memory location for each element
